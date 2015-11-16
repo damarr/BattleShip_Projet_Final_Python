@@ -7,6 +7,7 @@ def drawGrid(nbHeight,margin,windowWeight,posX,posY,gridR,gridG,gridB,screen):
     pixelPerSquare = (windowWeight - 2*margin)/nbHeight
     compensation = windowWeight/2
     basicTurtle = turtle.Turtle()
+    basicTurtle.hideturtle()
     basicTurtle.color(gridR,gridG,gridB)
     basicTurtle._tracer(10,1000)
     basicTurtle.penup()
