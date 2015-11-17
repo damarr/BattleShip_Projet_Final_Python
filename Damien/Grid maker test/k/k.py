@@ -2,6 +2,10 @@
 display = turtle.Screen()
 display.setup(800,800)
 
+'''
+Grid making function
+'''
+
 def drawGrid(nbHeight,margin,windowWeight,posX,posY,gridR,gridG,gridB,screen):
     #Initiation of turtle
     pixelPerSquare = (windowWeight - 2*margin)/nbHeight
@@ -30,6 +34,13 @@ def drawGrid(nbHeight,margin,windowWeight,posX,posY,gridR,gridG,gridB,screen):
         basicTurtle.right(90)
         basicTurtle.forward(pixelPerSquare)
         basicTurtle.left(90)
+
+
+'''
+Click Detection
+'''
+
+
 
 
 drawGrid(11,10,400,200,350,0,0,0,display)
