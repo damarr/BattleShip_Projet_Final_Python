@@ -4,8 +4,6 @@ class engineBattleShip:
 
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
-        self.clicTurtle = turtle.Turtle()
-        self.clicTurtle._tracer(10,1000)
         self.display.setup(sizeWidth,sizeHeight)
         self.itemDictionary = {}
         self.turtleKiller = []
@@ -29,7 +27,7 @@ class engineBattleShip:
         basicTurtle.pendown()
     
         #Adding items to itemDictionary
-        self.itemDictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight)]
+        self.itemDictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY)]
     
     
         #Drawing
@@ -68,9 +66,20 @@ class engineBattleShip:
         victimTurtle.penup()
         #victimTurtle.hideturtle()
         self.display.onscreenclick(victimTurtle.goto)
-        #for key in itemDictionary:
-            #itemDictionary.get(key)[]
+        posX = victimTurtle.position()[0]
+        posY = victimTurtle.position()[1]
+        if posX != 0.00 and posY != 0.00:
+            for key in self.itemDictionary:
+                temp = self.itemDictionary.get(key)[0]
+                lenght = temp[0]
+                height = temp[1]
+                temp = self.itemDictionary.get(key)[2]
+                posXItem = temp[0]
+                posYItem = temp[1]
+                if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY <= posYItem - height):
+                    self.display.bgcolor(green)
         self.turtleKiller.clear()
+        
 
 #(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
 game = engineBattleShip(800,800)
