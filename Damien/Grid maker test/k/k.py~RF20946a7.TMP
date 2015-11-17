@@ -1,4 +1,5 @@
-﻿import turtle
+﻿import time
+import turtle
 display = turtle.Screen()
 display.setup(800,800)
 
@@ -15,16 +16,15 @@ def drawGrid(itemName,itemDictionnary,nbHeight,margin,windowWeight,posX,posY,gri
     basicTurtle = turtle.Turtle()
     basicTurtle.hideturtle()
     basicTurtle.color(gridR,gridG,gridB)
-    basicTurtle._tracer(10,1000)
+    basicTurtle.speed(10)
     basicTurtle.penup()
     basicTurtle.setposition(-screen._window_size()[0]/2 + posX + margin,screen._window_size()[0]/2 - posY - margin)
     basicTurtle.pendown()
     
-    #Adding items to itemDictionnary
     itemDictionnary[itemName] = (windowWeight - 2*margin,windowWeight - 2*margin)
     
-    
     #Drawing
+    time1 = time.time()
     for x in range (4):
         basicTurtle.forward(windowWeight - 2*margin)
         basicTurtle.right(90)
@@ -48,6 +48,23 @@ def drawGrid(itemName,itemDictionnary,nbHeight,margin,windowWeight,posX,posY,gri
         basicTurtle.pendown()
         basicTurtle.back(windowWeight - 2*margin)
         basicTurtle.penup()
+    time2 = print(time.time())
+    return str(time2 - time1)
+
+    '''
+    print(time.time())
+    for x in range (0,nbHeight):
+        for y in range (0,nbHeight):
+            for w in range (4):
+                basicTurtle.forward(pixelPerSquare)
+                basicTurtle.right(90)
+            basicTurtle.forward(pixelPerSquare)
+        basicTurtle.backward(windowWeight - 2*margin)
+        basicTurtle.right(90)
+        basicTurtle.forward(pixelPerSquare)
+        basicTurtle.left(90)
+    print(time.time())
+    '''
 
 '''
 Click Detection
@@ -55,5 +72,5 @@ Click Detection
 
 
 
-drawGrid("Attack Grid",itemDictionnary,10,10,400,200,350,0,0,0,display)
+print(drawGrid("Attack Grid",itemDictionnary,10,10,400,200,350,0,0,0,display))
 drawGrid("Shot Grid",itemDictionnary,10,10,250,275,75,0,0,0,display)
