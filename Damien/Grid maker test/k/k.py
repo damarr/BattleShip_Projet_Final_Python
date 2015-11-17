@@ -69,7 +69,7 @@ class engineBattleShip:
         #victimTurtle.hideturtle()
         self.display.onscreenclick(victimTurtle.goto)
         print(victimTurtle.position())
-        self.turtleKiller.pop()
+        self.turtleKiller.clear()
         #for key in itemDictionary:
             #itemDictionary.get(key)[]
 
