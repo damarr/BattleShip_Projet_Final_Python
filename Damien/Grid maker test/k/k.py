@@ -1,7 +1,6 @@
 ﻿import turtle
 display = turtle.Screen()
 display.setup(800,800)
-
 itemDictionnary = {}
 
 '''
@@ -21,7 +20,7 @@ def drawGrid(itemName,itemDictionnary,nbHeight,margin,windowWeight,posX,posY,gri
     basicTurtle.pendown()
     
     #Adding items to itemDictionnary
-    itemDictionnary[itemName] = (windowWeight - 2*margin,windowWeight - 2*margin)
+    itemDictionnary[itemName] = [(windowWeight - 2*margin,windowWeight - 2*margin),(nbHeight,nbHeight)]
     
     
     #Drawing
