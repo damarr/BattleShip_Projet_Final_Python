@@ -68,10 +68,9 @@ class engineBattleShip:
         victimTurtle.penup()
         #victimTurtle.hideturtle()
         self.display.onscreenclick(victimTurtle.goto)
-        print(victimTurtle.position())
-        self.turtleKiller.clear()
         #for key in itemDictionary:
             #itemDictionary.get(key)[]
+        self.turtleKiller.clear()
 
 #(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
 game = engineBattleShip(800,800)
