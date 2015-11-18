@@ -24,7 +24,6 @@ class engineBattleShip:
             elif self.title == text2:
                 self.title = text1
                 self.display.title(text1)
-                
             else:
                 self.title = text1
                 self.display.title(text1)
@@ -104,5 +103,5 @@ game = engineBattleShip(600,600)
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0)
 while True:
-    game.windowTitleNotification("Hey","Listen",0.25)
+    game.windowTitleNotification("Hey","Listen",0.5)
     #game.clicManager()
