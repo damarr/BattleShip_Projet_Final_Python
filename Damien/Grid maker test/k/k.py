@@ -5,6 +5,7 @@ class engineBattleShip:
 
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
+        self.clicTurtle = turtle.Turtle()
         self.display.setup(sizeWidth,sizeHeight)
         self.itemDictionary = {}
         self.turtleKiller = []
@@ -95,7 +96,7 @@ class engineBattleShip:
     '''
 
     def clicManager(self):
-        self.turtleKiller.append(turtle.Turtle())
+        self.turtleKiller.append(self.clicTurtle)
         victimTurtle = self.turtleKiller[0]
         victimTurtle._tracer(10,1000)
         victimTurtle.penup()
@@ -123,18 +124,7 @@ game = engineBattleShip(800,800)
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0)
 
-#iterations = 0
-#pootis = time.time()
-
 while True:
-
-    #hey = time.time()
-    #if (hey - pootis) >= 1:
-     #   print(iterations)
-      #  pootis = time.time()
-       # iterations = 0
     #game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
-    
     game.clicManager()
     
-    #iterations += 1
