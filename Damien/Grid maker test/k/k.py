@@ -13,10 +13,26 @@ class engineBattleShip:
         self.startTime = 0
         self.title = ''
         
+    '''
+    Clears the window
+    '''
 
+    def clear(self):
+        self.display.clear()
+
+    '''
+    Sets a background to the window
+    '''
+
+    def bgImage(self,path):
+        self.display.bgpic(path)
+
+    '''
+    Send notifications as the title of the game window
+    '''
     def windowTitleNotification(self,text1,text2,timeToElapse):
         timeNow = time.time()
-        print (timeNow - self.startTime)
+        #print (timeNow - self.startTime)
         if (timeNow - self.startTime) >= timeToElapse:
             if self.title == text1:
                 self.title = text2
@@ -28,9 +44,11 @@ class engineBattleShip:
                 self.title = text1
                 self.display.title(text1)
             self.startTime = time.time()
+
     '''
     Grid making function
     '''
+
     def drawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
         #Initiation of turtle
         pixelPerSquare = (windowWidth - 2*margin)/nbHeight
@@ -75,13 +93,13 @@ class engineBattleShip:
     '''
     Click Detection
     '''
-    '''
+
     def clicManager(self):
         self.turtleKiller.append(turtle.Turtle())
         victimTurtle = self.turtleKiller[0]
         victimTurtle._tracer(10,1000)
         victimTurtle.penup()
-        #victimTurtle.hideturtle()
+        victimTurtle.hideturtle()
         self.display.onscreenclick(victimTurtle.goto)
         posX = victimTurtle.position()[0]
         posY = victimTurtle.position()[1]
@@ -93,15 +111,30 @@ class engineBattleShip:
                 temp = self.itemDictionary.get(key)[2]
                 posXItem = temp[0]
                 posYItem = temp[1]
-                if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY <= posYItem - height):
-                    self.display.bgcolor(green)
+                if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY <= posYItem - height): #Not Working Yet
+                    self.display.bgcolor(green) #Not Working Yet
         self.turtleKiller.clear()
-     '''   
 
-#(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
-game = engineBattleShip(600,600)
+
+'''
+Main
+'''
+game = engineBattleShip(800,800)
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0)
+
+#iterations = 0
+#pootis = time.time()
+
 while True:
-    game.windowTitleNotification("Hey","Listen",0.5)
-    #game.clicManager()
+
+    #hey = time.time()
+    #if (hey - pootis) >= 1:
+     #   print(iterations)
+      #  pootis = time.time()
+       # iterations = 0
+    #game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
+    
+    game.clicManager()
+    
+    #iterations += 1
