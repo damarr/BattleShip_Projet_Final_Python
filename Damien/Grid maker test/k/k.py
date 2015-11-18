@@ -1,4 +1,5 @@
 ﻿import turtle
+import time
 
 class engineBattleShip:
 
@@ -9,8 +10,25 @@ class engineBattleShip:
         self.turtleKiller = []
         self.x = 0
         self.y = 0
+        self.startTime = 0
+        self.title = ''
         
 
+    def windowTitleNotification(self,text1,text2,timeToElapse):
+        timeNow = time.time()
+        print (timeNow - self.startTime)
+        if (timeNow - self.startTime) >= timeToElapse:
+            if self.title == text1:
+                self.title = text2
+                self.display.title(text2)
+            elif self.title == text2:
+                self.title = text1
+                self.display.title(text1)
+                
+            else:
+                self.title = text1
+                self.display.title(text1)
+            self.startTime = time.time()
     '''
     Grid making function
     '''
@@ -58,7 +76,7 @@ class engineBattleShip:
     '''
     Click Detection
     '''
-
+    '''
     def clicManager(self):
         self.turtleKiller.append(turtle.Turtle())
         victimTurtle = self.turtleKiller[0]
@@ -79,11 +97,12 @@ class engineBattleShip:
                 if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY <= posYItem - height):
                     self.display.bgcolor(green)
         self.turtleKiller.clear()
-        
+     '''   
 
 #(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
-game = engineBattleShip(800,800)
+game = engineBattleShip(600,600)
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0)
 while True:
-    game.clicManager()
+    game.windowTitleNotification("Hey","Listen",0.25)
+    #game.clicManager()
