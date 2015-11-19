@@ -30,6 +30,15 @@ class engineBattleShip:
         self.display.bgpic(os.path.abspath(path))
 
     '''
+    Load .GIF images
+    '''
+
+    def loadImage(self,name,path): #not 100% good yet
+        imageTurtle = turtle.Turtle()
+        self.display.addshape(os.path.abspath(path))
+        imageTurtle.shape(os.path.abspath(path))
+
+    '''
     Send notifications as the title of the game window
     '''
     def windowTitleNotification(self,text1,text2,timeToElapse):
@@ -95,7 +104,6 @@ class engineBattleShip:
             basicTurtle.back(windowWidth - 2*margin)
             basicTurtle.penup()
 
-
     def getRawItemPosition(self,name):
         return(self.itemDictionary.get(name)[3])
 
@@ -135,7 +143,6 @@ class engineBattleShip:
                     return key
         self.turtleKiller.clear()
 
-
 '''
 Main
 '''
@@ -143,8 +150,6 @@ game = engineBattleShip(800,800)
 game.bgImage("image\Background.gif")
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
-
-
 while True:
     game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
     print(game.clicManager())
