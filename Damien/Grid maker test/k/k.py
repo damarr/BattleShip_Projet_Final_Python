@@ -50,13 +50,14 @@ class engineBattleShip:
     Grid making function
     '''
 
-    def drawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,gridR,gridG,gridB):
+    def drawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
         #Initiation of turtle
         pixelPerSquare = (windowWidth - 2*margin)/nbHeight
         compensation = windowWidth/2
         basicTurtle = turtle.Turtle()
         basicTurtle.hideturtle()
-        basicTurtle.color(gridR,gridG,gridB)
+        basicTurtle.pencolor(PengridR/255,PengridG/255,PengridB/255)
+        basicTurtle.fillcolor(FillgridR/255,FillgridG/255,FillgridB/255)
         basicTurtle._tracer(10,1000)
         basicTurtle.penup()
         basicTurtle.setposition(-self.display._window_size()[0]/2 + posX + margin,self.display._window_size()[0]/2 - posY - margin)
@@ -67,12 +68,13 @@ class engineBattleShip:
     
     
         #Drawing
+        basicTurtle.begin_fill()
         for x in range (4):
             basicTurtle.forward(windowWidth - 2*margin)
             basicTurtle.right(90)
-    
         resetX = basicTurtle.pos()[0]
         resetY = basicTurtle.pos()[1]
+        basicTurtle.end_fill()
 
         basicTurtle.right(90)
         for x in range (0,nbHeight):
@@ -90,6 +92,7 @@ class engineBattleShip:
             basicTurtle.pendown()
             basicTurtle.back(windowWidth - 2*margin)
             basicTurtle.penup()
+
 
     '''
     Click Detection
@@ -121,8 +124,9 @@ class engineBattleShip:
 Main
 '''
 game = engineBattleShip(800,800)
-game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0)
-game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0)
+game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
+game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
+
 
 while True:
     #game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
