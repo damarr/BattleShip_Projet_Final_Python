@@ -1,5 +1,6 @@
 ﻿import turtle
 import time
+import os
 
 class engineBattleShip:
 
@@ -26,7 +27,7 @@ class engineBattleShip:
     '''
 
     def bgImage(self,path):
-        self.display.bgpic(path)
+        self.display.bgpic(os.path.abspath(path))
 
     '''
     Send notifications as the title of the game window
@@ -95,6 +96,19 @@ class engineBattleShip:
             basicTurtle.penup()
 
 
+    def getRawItemPosition(self,name):
+        return(self.itemDictionary.get(name)[3])
+
+    def getUserItemPosition(self,name):
+        return(self.itemDictionary.get(name)[2])
+
+    def getGridSquareSize(self,name):
+        stuff = self.itemDictionary.get(name)[1]
+        return(stuff[0])
+    
+    def getItemSize(self,name):
+        return(self.itemDictionary.get(name)[0])
+
     '''
     Click Detection
     '''
@@ -126,6 +140,7 @@ class engineBattleShip:
 Main
 '''
 game = engineBattleShip(800,800)
+game.bgImage("image\Background.gif")
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
 
