@@ -33,7 +33,6 @@ class engineBattleShip:
     '''
     def windowTitleNotification(self,text1,text2,timeToElapse):
         timeNow = time.time()
-        #print (timeNow - self.startTime)
         if (timeNow - self.startTime) >= timeToElapse:
             if self.title == text1:
                 self.title = text2
@@ -61,10 +60,12 @@ class engineBattleShip:
         basicTurtle._tracer(10,1000)
         basicTurtle.penup()
         basicTurtle.setposition(-self.display._window_size()[0]/2 + posX + margin,self.display._window_size()[0]/2 - posY - margin)
+        rawX = basicTurtle.position()[0]
+        rawY = basicTurtle.position()[1]
         basicTurtle.pendown()
     
         #Adding items to itemDictionary
-        self.itemDictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY)]
+        self.itemDictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
     
     
         #Drawing
@@ -112,11 +113,12 @@ class engineBattleShip:
                 temp = self.itemDictionary.get(key)[0]
                 lenght = temp[0]
                 height = temp[1]
-                temp = self.itemDictionary.get(key)[2]
+                temp = self.itemDictionary.get(key)[3]
                 posXItem = temp[0]
                 posYItem = temp[1]
-                if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY <= posYItem - height): #Not Working Yet
-                    self.display.bgcolor(green) #Not Working Yet
+                print(posX,posY)
+                if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY >= posYItem - height):
+                    return key
         self.turtleKiller.clear()
 
 
@@ -129,6 +131,6 @@ game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
 
 
 while True:
-    #game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
-    game.clicManager()
+    game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
+    print(game.clicManager())
     
