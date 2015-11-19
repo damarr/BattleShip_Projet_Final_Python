@@ -149,12 +149,14 @@ class engineBattleShip:
                 temp2 = self.itemDictionary.get(key)[1]
                 tempPosition = self.itemDictionary.get(key)[3]
                 pixelPerSquare = temp[0]/temp2[0]
-                for x in range (temp2[0]):
+                for x in range (temp2[0] + 1):
                     if clicPosition[0] < ((x * pixelPerSquare) + tempPosition[0]):
                         caseX = x
-                for y in range (temp2[1]):
+                        break
+                for y in range (temp2[1] + 1):
                     if (clicPosition[1] > (tempPosition[1] - (y * pixelPerSquare))):
                         caseY = y
+                        break
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
