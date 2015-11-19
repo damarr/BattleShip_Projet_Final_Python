@@ -138,11 +138,27 @@ class engineBattleShip:
                 temp = self.itemDictionary.get(key)[3]
                 posXItem = temp[0]
                 posYItem = temp[1]
-                print(posX,posY)
                 if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY >= posYItem - height):
-                    return key
+                    return((key,(posX,posY)))
         self.turtleKiller.clear()
 
+    def gridDecomposer(self,name,clicPosition):
+        for key in self.itemDictionary:
+            if key == name:
+                temp = self.itemDictionary.get(key)[0]
+                temp2 = self.itemDictionary.get(key)[1]
+                tempPosition = self.itemDictionary.get(key)[3]
+                pixelPerSquare = temp[0]/temp2[0]
+                for x in range (temp2[0]):
+                    if clicPosition[0] < ((x * pixelPerSquare) + tempPosition[0]):
+                        caseX = x
+                for y in range (temp2[1]):
+                    if (clicPosition[1] > (tempPosition[1] - (y * pixelPerSquare))):
+                        caseY = y
+        positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
+        positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
+        positionFinal = (positionX,positionY)
+        return(positionFinal)
 '''
 Main
 '''
@@ -152,5 +168,7 @@ game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
 while True:
     game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
-    print(game.clicManager())
+    yay = game.clicManager()
+    if yay != None:
+        print(game.gridDecomposer(yay[0],yay[1]))
     
