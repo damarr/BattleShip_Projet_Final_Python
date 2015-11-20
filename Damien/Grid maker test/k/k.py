@@ -1,11 +1,12 @@
 ﻿import turtle
 import time
 import os
+import webbrowser
 
 class engineBattleShip:
-
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
+        self.whileValue = True
         self.clicTurtle = turtle.Turtle()
         self.display.setup(sizeWidth,sizeHeight)
         self.itemDictionary = {}
@@ -16,30 +17,59 @@ class engineBattleShip:
         self.title = ''
         
     '''
-    Clears the window
+    Efface tout dans la fenêtre
     '''
 
     def clear(self):
         self.display.clear()
 
+    def getWhileValue(self):
+        return self.whileValue
+
     '''
-    Sets a background to the window
+    Change le fond d'écran de la fenêtre
     '''
 
     def bgImage(self,path):
         self.display.bgpic(os.path.abspath(path))
 
     '''
-    Load .GIF images
+    Crée des boutons qui prennent l'apparence d'images
+    Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image.
     '''
 
-    def loadImage(self,name,path): #not 100% good yet
+    def button(self,name,path,posX,posY,lenght,height): #not 100% good yet
         imageTurtle = turtle.Turtle()
+        imageTurtle.penup()
         self.display.addshape(os.path.abspath(path))
         imageTurtle.shape(os.path.abspath(path))
+        imageTurtle.goto(posX,posY)
+        #[(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
+        self.itemDictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
 
     '''
-    Send notifications as the title of the game window
+    Permet de changer de partie du programme
+    '''
+
+    def startButton(self):
+        self.whileValue = False
+
+    '''
+    Quite le programme.
+    '''
+
+    def exitButton(self):
+        self.display.bye()
+
+    '''
+    Ouvre une page internet.
+    '''
+
+    def infoButton(self):
+        webbrowser.open("https://github.com/Damfurrywolf/BattleShip_Projet_Final_Python")
+
+    '''
+    Envoie une "notification à l'utilisateur en changeant le titre de la fenêtre"
     '''
     def windowTitleNotification(self,text1,text2,timeToElapse):
         timeNow = time.time()
@@ -56,7 +86,9 @@ class engineBattleShip:
             self.startTime = time.time()
 
     '''
-    Grid making function
+    Fonction qui crée des grilles.
+    Besoin: d'un nom pour la grille, le nombre de cases en largeur ou hauteur, l'espace désiré laissé sur les côtés,
+    une position en X et en Y, une couleur en style RGB our la couleur de la grille et une couleur en type RGB pour le remplisage
     '''
 
     def drawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
@@ -104,21 +136,30 @@ class engineBattleShip:
             basicTurtle.back(windowWidth - 2*margin)
             basicTurtle.penup()
 
+    '''
+    Retourne la position de l'item entré.
+    '''
+
     def getRawItemPosition(self,name):
         return(self.itemDictionary.get(name)[3])
 
-    def getUserItemPosition(self,name):
-        return(self.itemDictionary.get(name)[2])
+    '''
+    Permet d'obtenir le nombre de cases en largeur et en hauteur d'une grille entrée (Une valeur car même nombre de cases dans les deux sens).
+    '''
 
     def getGridSquareSize(self,name):
         stuff = self.itemDictionary.get(name)[1]
         return(stuff[0])
     
+    '''
+    Permet d'obtenir la largeur et la hauteur dans un tuple d'un objet entré.
+    '''
+
     def getItemSize(self,name):
         return(self.itemDictionary.get(name)[0])
 
     '''
-    Click Detection
+    Détecte les clics de l'utilisateur et retourne l'item cliqué ainsi que la position du clic.
     '''
 
     def clicManager(self):
@@ -139,8 +180,13 @@ class engineBattleShip:
                 posXItem = temp[0]
                 posYItem = temp[1]
                 if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY >= posYItem - height):
+                    self.clicTurtle.goto(0,0)
                     return((key,(posX,posY)))
         self.turtleKiller.clear()
+
+    '''
+    Retourne la position en X et en Y de la case cliquée par l'utilisateur
+    '''
 
     def gridDecomposer(self,name,clicPosition):
         for key in self.itemDictionary:
@@ -149,28 +195,53 @@ class engineBattleShip:
                 temp2 = self.itemDictionary.get(key)[1]
                 tempPosition = self.itemDictionary.get(key)[3]
                 pixelPerSquare = temp[0]/temp2[0]
+                clicPosition2 = clicPosition[1]
                 for x in range (temp2[0] + 1):
-                    if clicPosition[0] < ((x * pixelPerSquare) + tempPosition[0]):
+                    if clicPosition2[0] < ((x * pixelPerSquare) + tempPosition[0]):
                         caseX = x
                         break
                 for y in range (temp2[1] + 1):
-                    if (clicPosition[1] > (tempPosition[1] - (y * pixelPerSquare))):
+                    if (clicPosition2[1] > (tempPosition[1] - (y * pixelPerSquare))):
                         caseY = y
                         break
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
         return(positionFinal)
+    
+    '''
+    Pernet de gérer n'importe quel item ajouté dans le dictionaire d'items
+    '''
+
+    def itemDetector(self,clicPosition):
+        if (clicPosition != None):
+            for key in self.itemDictionary:
+                if (key == clicPosition[0]):
+                    shortcut = self.itemDictionary.get(key)
+                    if (shortcut[1] != (0,0)):
+                        self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
+                    elif (shortcut[1] == (0,0)):
+                        if key == "start":
+                            self.startButton()
+                        elif key == "exit":
+                            self.exitButton()
+                        elif key == "infos":
+                            self.infoButton()
+
+
 '''
-Main
+Main pour tester les fonctionnalitées
 '''
 game = engineBattleShip(800,800)
 game.bgImage("image\Background.gif")
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
+game.button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
+game.button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
+game.button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+while game.getWhileValue():
+    game.itemDetector(game.clicManager())
+print("You have now started the game")
 while True:
     game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
-    yay = game.clicManager()
-    if yay != None:
-        print(game.gridDecomposer(yay[0],yay[1]))
-    
+    game.itemDetector(game.clicManager())
