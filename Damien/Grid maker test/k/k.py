@@ -15,6 +15,8 @@ class engineBattleShip:
         self.y = 0
         self.startTime = 0
         self.title = ''
+        self.caseX = None
+        self.caseY = None
         
     '''
     Efface tout dans la fenêtre
@@ -198,16 +200,24 @@ class engineBattleShip:
                 clicPosition2 = clicPosition[1]
                 for x in range (temp2[0] + 1):
                     if clicPosition2[0] < ((x * pixelPerSquare) + tempPosition[0]):
-                        caseX = x
+                        self.caseX = x
                         break
                 for y in range (temp2[1] + 1):
                     if (clicPosition2[1] > (tempPosition[1] - (y * pixelPerSquare))):
-                        caseY = y
+                        self.caseY = y
                         break
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
         return(positionFinal)
+
+    def getClickedSquare(self):
+        if self.caseX != None and self.caseY != None:
+            transitionX = self.caseX
+            transitionY = self.caseY
+            self.caseX = None
+            self.caseY = None
+            return ((transitionX,transitionY))
     
     '''
     Pernet de gérer n'importe quel item ajouté dans le dictionaire d'items
