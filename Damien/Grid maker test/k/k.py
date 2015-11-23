@@ -211,6 +211,10 @@ class engineBattleShip:
         positionFinal = (positionX,positionY)
         return(positionFinal)
 
+    '''
+    Retourne la case cliquée en case et non en pixel
+    '''
+
     def getClickedSquare(self):
         if self.caseX != None and self.caseY != None:
             transitionX = self.caseX
