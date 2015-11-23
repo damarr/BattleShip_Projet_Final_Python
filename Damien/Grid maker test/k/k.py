@@ -247,12 +247,27 @@ class engineBattleShip:
 Main pour tester les fonctionnalitées
 '''
 game = engineBattleShip(800,800)
+
+#Image de fond
 game.bgImage("image\Background.gif")
+
+#Grids
 game.drawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
 game.drawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
+
+#Boutons
 game.button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
 game.button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
 game.button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+
+#Bateaux
+game.button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
+game.button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
+game.button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
+game.button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
+game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
+
+#Main loops
 while game.getWhileValue():
     game.itemDetector(game.clicManager())
 print("You have now started the game")
