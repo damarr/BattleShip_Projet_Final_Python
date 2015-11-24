@@ -3,21 +3,24 @@
 class Battleship():
     def __init__(self,pseudo,width,height):
         """methode pour l'initialisation du jeu """
-        #parametrage de la fen�tre
+        #parametrage de la fenetre
         self.fen = turtle.Screen()
         self.fen.setup(width,height,startx=None,starty=None)
         self.width=width; self.height=height
-        self.fen.title("Battleship")
         #parametrage de la tortue
         self.turt = turtle.Turtle()
         #self.turt.ht() #on cache la tortue
-        Battleship.environnementCreer(self)
+        self.environnementCreer()
+        self.fen.listen() #methode listen qui redirige tous les evenements (souris/clavier) vers la fenetre turtle
         self.tour="joueur" #creer une fonction pour savoir si cest notre tour
-        self.fen.onclick(Battleship.metunx) #fonction appel�e quand on clicke
-        self.fen.mainloop()
+        self.fen.onclick(self.onClick,btn=1) #fonction appelee quand on clicke
+        self.fen.onkeypress(self.onType, "space") #fonction appelee quand on pese sur space
 
     def environnementCreer(self):
-        self.turt._tracer(2)
+        """ Creee lenvironnement de jeu et les grilles
+        """
+        self.fen.title("Battleship")
+        self.turt._tracer(2) #desactive les animations
         self.fen.bgpic("background2.gif")
         self.turt.pen(fillcolor="black",pencolor="black",pensize=2,outline=1)
         
@@ -64,33 +67,41 @@ class Battleship():
             coordx+=30
     
     def coordonnee(self,x,y):
-        if x<-350 or x>300 or y<-50 or y>300:
-            return "Erreur"
+        """ Fonction pour determiner la colonne et la rangee qu'on a clique : retourne le tuple
+        Depend du tour du joueur ou de l'adversaire -- il faudra une fonction pour jouer a tour de role"""
         if self.tour=="joueur":
-            startx=-350; starty=-50
-        else:
-            startx=0; starty=-50
-        """ boucles pour determiner la colonne et la rangee qu'on a clique : retourne le tuple"""
-        indicex=0; indicey=10
-        while x>startx and startx<(startx+300):
+            if x<-350 or x>-30 or y>250 or y<-50:
+                raise ValueError("Erreur de zone")
+            startx=-350; starty=250 #on commence a gauche en haut
+        else: #si self.tour=="adversaire"
+            if x<0 or x>300 or y>250 or y<-50:
+                raise ValueError("Erreur de zone")
+            startx=0; starty=250 #on commence a gauche en haut
+        indicex=0; indicey=0; limite=startx+300
+        while x>startx and startx<=limite:
             startx+=30
             indicex+=1
-        while y>starty and starty<250:
-            starty+=30
-            indicey-=1
+        while y<starty and starty<=250:
+            starty-=30
+            indicey+=1
         return (indicex-1,indicey-1)
 
-    def metunx(self,coord):
+    def onClick(self,x,y):
+        """ Lorsqu'on clique, on detecte la zone cliquee d'abord et ensuite les actions qui sont a prendre"""
         self.fen.onclick(None,btn=1)
-        indices=Battleship.coordonnee(self,coord[0],coord[1])
-        print(self.grillejoueur[indices])
-        self.turt.goto(self.grillejoueur[indices][0],self.grillejoueur[indices][1])
-        self.turt.color("blue")
-        self.turt.write("X", move=True, align="center", font=("Arial", 9, "normal"))
-        self.fen.onclick(metunx, btn=1)
+        if (x>-350 and x<-30 and y<250 and y>-50) or (x>0 and x<300 and y<250 and y>-50):
+            indices=self.coordonnee(x,y) #va chercher le numero de case a partir de ou on a clique
+            self.turt.goto(self.grillejoueur[indices][0],self.grillejoueur[indices][1]) #va chercher le point central de la case ou on a clique
+        else:
+            #placer ici d'autres actions au click
+            print("veuillez jouer svp")
+        self.fen.onclick(self.onClick, btn=1)
 
+    def onType(self):
+        self.fen.onkeypress(None,"space")
+        print("vous avez pese sur space")
+        self.fen.onkeypress(self.onType,"space")
 
 
 jeubattleship = Battleship("Nadia",900,600)
-print(jeubattleship.coordonnee(-320,100))
-jeubattleship.metunx((-320,100))
+turtle.mainloop()
