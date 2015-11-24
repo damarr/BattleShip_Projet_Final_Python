@@ -19,7 +19,10 @@ class engineBattleShip:
         self.caseY = None
         self.orientation=True
         self.drawing_turtle=turtle.Turtle()
+        self.drawing_turtle.fillcolor("gray")
         self.boatClic = None
+        self.squareSizeAtt = 0
+        self.squareSizeShot = 0
         
     '''
     Efface tout dans la fenêtre
@@ -237,9 +240,14 @@ class engineBattleShip:
                     shortcut = self.itemDictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
+                        self.squareSizeAtt=self.getGridSquareSize("Attack Grid")
+                        self.squareSizeShot=self.getGridSquareSize("Shot Grid")
                         if self.boatClic != None:
-                            print("Thos should work" + str(self.boatClic))
-                            self.boatClic = None
+                            if key != "Shot Grid":
+                                
+                                self.boatButton(self.gridDecomposer(key,clicPosition))
+                                print("Thos should work" + str(self.boatClic))
+                                self.boatClic = None
             
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
@@ -265,18 +273,21 @@ class engineBattleShip:
             self.display.onkeypress(self.BoatHorizontal,'Left')
             print(self.orientation)
 
-    def porteavionsButton(self,position):
-        if getClickedSquare()!=None:
-            self.square_size=38
-            self.drawing_turtle.penup
-            self.color_x=position[0]
-            self.color_y=position[1]
-            self.drawing_turtle.goto(self.color_x,self.color_y)
-            self.drawing_turtle.begin_fill()
-            self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
-            self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
-            self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
-            self.drawing_turtle.goto(self.color_x,self.color_y)
+    def boatButton(self,position):
+        
+        if self.getClickedSquare()!=(None,None):
+            for i in range (self.boatClic):
+                self.square_size=38
+                self.drawing_turtle.penup
+                self.color_x=position[0]
+                self.color_y=position[1]
+                self.drawing_turtle.goto(self.color_x,self.color_y)
+                self.drawing_turtle.begin_fill()
+                self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
+                self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
+                self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+                self.drawing_turtle.goto(self.color_x,self.color_y)
+                self.drawing_turtle.end_fill()
 
     def boat(self,key):
         if key == "sous-marin":
@@ -290,16 +301,6 @@ class engineBattleShip:
         elif key =="croiseur":
             self.boatClic = 4
         
-
-
-
-
-
-        
-        
-
-
-
 
 
 
