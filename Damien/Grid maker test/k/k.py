@@ -17,6 +17,9 @@ class engineBattleShip:
         self.title = ''
         self.caseX = None
         self.caseY = None
+        self.orientation=True
+        self.drawing_turtle=turtle.Turtle()
+        self.boatClic = None
         
     '''
     Efface tout dans la fenêtre
@@ -209,7 +212,7 @@ class engineBattleShip:
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
-        return(positionFinal)
+        return positionFinal
 
     '''
     Retourne la case cliquée en case et non en pixel
@@ -224,7 +227,7 @@ class engineBattleShip:
             return ((transitionX,transitionY))
     
     '''
-    Pernet de gérer n'importe quel item ajouté dans le dictionaire d'items
+    Permet de gérer n'importe quel item ajouté dans le dictionaire d'items
     '''
 
     def itemDetector(self,clicPosition):
@@ -234,6 +237,10 @@ class engineBattleShip:
                     shortcut = self.itemDictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
+                        if self.boatClic != None:
+                            print("Thos should work" + str(self.boatClic))
+                            self.boatClic = None
+            
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
                             self.startButton()
@@ -241,6 +248,59 @@ class engineBattleShip:
                             self.exitButton()
                         elif key == "infos":
                             self.infoButton()
+                        elif (key=="porte-avions") or (key=="contre-torpilleur") or (key=="sous-marin") or (key=="croiseur") or (key=="torpilleur"):
+                            self.boat(key)
+
+    def BoatVertical(self):
+        if self.getWhileValue()==True:
+            self.display.onkeypress(None,'Right')
+            self.orientation=True
+            self.display.onkeypress(self.BoatVertical,'Right')
+            print(self.orientation)
+
+    def BoatHorizontal(self):
+        if self.getWhileValue()==True:
+            self.display.onkeypress(None,'Left')
+            self.orientation=False
+            self.display.onkeypress(self.BoatHorizontal,'Left')
+            print(self.orientation)
+
+    def porteavionsButton(self,position):
+        if getClickedSquare()!=None:
+            self.square_size=38
+            self.drawing_turtle.penup
+            self.color_x=position[0]
+            self.color_y=position[1]
+            self.drawing_turtle.goto(self.color_x,self.color_y)
+            self.drawing_turtle.begin_fill()
+            self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
+            self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
+            self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+            self.drawing_turtle.goto(self.color_x,self.color_y)
+
+    def boat(self,key):
+        if key == "sous-marin":
+            self.boatClic = 3
+        elif key == "contre-torpilleur":
+            self.boatClic = 3
+        elif key =="porte-avions":
+            self.boatClic = 5
+        elif key =="torpilleur":
+            self.boatClic = 2
+        elif key =="croiseur":
+            self.boatClic = 4
+        
+
+
+
+
+
+        
+        
+
+
+
+
 
 
 '''
@@ -270,6 +330,9 @@ game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
 #Main loops
 while game.getWhileValue():
     game.itemDetector(game.clicManager())
+    game.display.onkeypress(game.BoatVertical,'Right')
+    game.display.onkeypress(game.BoatHorizontal,'Left')
+    game.display.listen()
 print("You have now started the game")
 while True:
     game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
