@@ -220,7 +220,7 @@ class engineBattleShip:
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
-        return positionFinal
+        return (positionFinal)
 
     '''
     Retourne la case cliquée en case et non en pixel
@@ -232,7 +232,7 @@ class engineBattleShip:
             transitionY = self.caseY
             self.caseX = None
             self.caseY = None
-            return ((transitionX,transitionY))
+            return ((transitionX-1,transitionY-1))
     
     '''
     Permet de gérer n'importe quel item ajouté dans le dictionaire d'items
@@ -281,8 +281,8 @@ class engineBattleShip:
 
     def boatButton(self,position):
         squarePosition=self.getClickedSquare()
-        xsquarePosition=squarePosition[0]
-        ysquarePosition=squarePosition[1]
+        self.xsquarePosition=squarePosition[0]
+        self.ysquarePosition=squarePosition[1]
         if squarePosition != (None,None):
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
@@ -354,33 +354,33 @@ class engineBattleShip:
         if self.boatClic==(3,"sous-marin"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.sous_marin.append((position[0]-2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                    self.sous_marin.append((position[0],position[1]+i))
+                    self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
-                    self.sous_marin.append((position[0]-2+i,position[1]-2)) 
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                    self.sous_marin.append((position[0]+i,position[1])) 
+                    self.all_position.append((position[0]+i,position[1])) 
 
 
         if self.boatClic==(2,"torpilleur"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.torpilleur.append((position[0]-2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                    self.torpilleur.append((position[0],position[1]+i))
+                    self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
-                    self.torpilleur.append((position[0]-2+i,position[1]-2)) 
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                    self.torpilleur.append((position[0]+i,position[1])) 
+                    self.all_position.append((position[0]+i,position[1])) 
 
         
         if self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.contre_torpilleur.append((position[0]--2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                    self.contre_torpilleur.append((position[0],position[1]+i))
+                    self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
-                    self.contre_torpilleur.append((position[0]-2+i,position[1]-2)) 
+                    self.contre_torpilleur.append((position[0]+i,position[1])) 
                     self.all_position.append((position[0]-2+i,position[1]-2)) 
 
 
@@ -406,7 +406,6 @@ class engineBattleShip:
                     self.all_position.append((position[0]-2+i,position[1]-2)) 
         print(self.porte_avions)
         print(self.all_position)
-
 
             
             
