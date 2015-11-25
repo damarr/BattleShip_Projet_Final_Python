@@ -2,7 +2,6 @@
 import time
 import os
 import webbrowser
-#Testing some shit
 
 class engineBattleShip:
     def __init__(self,sizeWidth,sizeHeight):
@@ -437,7 +436,6 @@ game.button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
 game.button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
 game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
 #Main loops
-print("Get rekt mom")
 while game.getWhileValue():
     game.itemDetector(game.clicManager())
     game.display.onkeypress(game.BoatVertical,'Right')
