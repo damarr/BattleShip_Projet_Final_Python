@@ -17,7 +17,18 @@ class engineBattleShip:
         self.title = ''
         self.caseX = None
         self.caseY = None
-        
+        self.orientation=True
+        self.drawing_turtle=turtle.Turtle()
+        self.drawing_turtle.fillcolor("gray")
+        self.boatClic = (None,None)
+        self.squareSizeAtt = 0
+        self.squareSizeShot = 0
+        self.torpilleur=[]
+        self.contre_torpilleur=[]
+        self.sous_marin=[]
+        self.croiseur=[]
+        self.porte_avions=[]
+        self.all_position=[]
     '''
     Efface tout dans la fenêtre
     '''
@@ -209,7 +220,7 @@ class engineBattleShip:
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         positionFinal = (positionX,positionY)
-        return(positionFinal)
+        return positionFinal
 
     '''
     Retourne la case cliquée en case et non en pixel
@@ -224,7 +235,7 @@ class engineBattleShip:
             return ((transitionX,transitionY))
     
     '''
-    Pernet de gérer n'importe quel item ajouté dans le dictionaire d'items
+    Permet de gérer n'importe quel item ajouté dans le dictionaire d'items
     '''
 
     def itemDetector(self,clicPosition):
@@ -234,6 +245,15 @@ class engineBattleShip:
                     shortcut = self.itemDictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
+                        self.squareSizeAtt=self.getGridSquareSize("Attack Grid")
+                        self.squareSizeShot=self.getGridSquareSize("Shot Grid")
+                        if self.boatClic != (None,None):
+                            if key != "Shot Grid":
+                                
+                                self.boatButton(self.gridDecomposer(key,clicPosition))
+                                print("Thos should work" + str(self.boatClic[0]))
+                                self.boatClic = (None,None)
+            
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
                             self.startButton()
@@ -241,8 +261,158 @@ class engineBattleShip:
                             self.exitButton()
                         elif key == "infos":
                             self.infoButton()
+                        elif (key=="porte-avions") or (key=="contre-torpilleur") or (key=="sous-marin") or (key=="croiseur") or (key=="torpilleur"):
+                            self.boat(key)
+                            self.orientation=True
+
+    def BoatVertical(self):
+        if self.getWhileValue()==True:
+            self.display.onkeypress(None,'Right')
+            self.orientation=True
+            self.display.onkeypress(self.BoatVertical,'Right')
+            print(self.orientation)
+
+    def BoatHorizontal(self):
+        if self.getWhileValue()==True:
+            self.display.onkeypress(None,'Left')
+            self.orientation=False
+            self.display.onkeypress(self.BoatHorizontal,'Left')
+            print(self.orientation)
+
+    def boatButton(self,position):
+        squarePosition=self.getClickedSquare()
+        xsquarePosition=squarePosition[0]
+        ysquarePosition=squarePosition[1]
+        if squarePosition != (None,None):
+            for i in range (self.boatClic[0]):
+                if self.orientation==True:
+                    self.square_size = 38
+                    self.drawing_turtle.penup
+                    self.color_x=position[0]
+                    self.color_y=position[1]-self.square_size*i
+                    test=position[1]-self.square_size*(self.boatClic[0]-1)
+                    if test>=-302:
+                        self.drawing_turtle.penup()
+                        self.drawing_turtle.goto(self.color_x,self.color_y)
+                        self.drawing_turtle.pendown()
+                        self.drawing_turtle.begin_fill()
+                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,self.color_y)
+                        self.drawing_turtle.end_fill()
+
+                        
+
+                else:
+                    self.square_size = 38
+                    self.drawing_turtle.penup()
+                    self.color_x=position[0]+self.square_size*i
+                    self.color_y=position[1]
+                    test=position[0]+self.square_size*(self.boatClic[0]-1)
+                    if test <= 152:
+                        self.drawing_turtle.penup()
+                        self.drawing_turtle.goto(self.color_x,self.color_y)
+                        self.drawing_turtle.pendown()
+                        self.drawing_turtle.begin_fill()
+                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,self.color_y)
+                        self.drawing_turtle.end_fill()
+            self.boatDict(squarePosition)
+
+    def boat(self,key):
+        if key == "sous-marin":
+            if self.sous_marin==[]:
+                self.boatClic = (3,"sous-marin")
+            else:
+                print("This ship is already on the map")
+        elif key == "contre-torpilleur":
+            if self.contre_torpilleur==[]:
+                self.boatClic = (3,"contre-torpilleur")
+            else:
+                print("This ship is already on the map")
+        elif key =="porte-avions":
+            if self.porte_avions==[]:
+                self.boatClic = (5,"porte-avions")
+            else:
+                print("This ship is already on the map")
+        elif key =="torpilleur":
+            if self.torpilleur==[]:
+                self.boatClic = (2,"torpilleur")
+            else:
+                print("This ship is already on the map")
+        elif key =="croiseur":
+            if self.croiseur==[]:
+              self.boatClic = (4,"croiseur")
+            else:
+                print("This ship is already on the map")
+
+        
+    def boatDict(self, position):
+        if self.boatClic==(3,"sous-marin"):
+            if self.orientation==True:
+                for i in range (self.boatClic[0]):
+                    self.sous_marin.append((position[0]-2,position[1]-2+i))
+                    self.all_position.append((position[0]-2,position[1]-2+i))
+            else:
+                for i in range (self.boatClic[0]):
+                    self.sous_marin.append((position[0]-2+i,position[1]-2)) 
+                    self.all_position.append((position[0]-2+i,position[1]-2)) 
 
 
+        if self.boatClic==(2,"torpilleur"):
+            if self.orientation==True:
+                for i in range (self.boatClic[0]):
+                    self.torpilleur.append((position[0]-2,position[1]-2+i))
+                    self.all_position.append((position[0]-2,position[1]-2+i))
+            else:
+                for i in range (self.boatClic[0]):
+                    self.torpilleur.append((position[0]-2+i,position[1]-2)) 
+                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+
+        
+        if self.boatClic==(3,"contre-torpilleur"):
+            if self.orientation==True:
+                for i in range (self.boatClic[0]):
+                    self.contre_torpilleur.append((position[0]--2,position[1]-2+i))
+                    self.all_position.append((position[0]-2,position[1]-2+i))
+            else:
+                for i in range (self.boatClic[0]):
+                    self.contre_torpilleur.append((position[0]-2+i,position[1]-2)) 
+                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+
+
+        if self.boatClic==(5,"porte-avions"):
+            if self.orientation==True:
+                for i in range (self.boatClic[0]):
+                    self.porte_avions.append((position[0]-2,position[1]-2+i))
+                    self.all_position.append((position[0]-2,position[1]-2+i))
+            else:
+                for i in range (self.boatClic[0]):
+                    self.porte_avions.append((position[0]-2+i,position[1]-2))
+                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+
+                       
+        if self.boatClic==(4,"croiseur"):
+            if self.orientation==True:
+                for i in range (self.boatClic[0]):
+                    self.croiseur.append((position[0]--2,position[1]-2+i))
+                    self.all_position.append((position[0]-2,position[1]-2+i))
+            else:
+                for i in range (self.boatClic[0]):
+                    self.croiseur.append((position[0]-2+i,position[1]-2))
+                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+        print(self.porte_avions)
+        print(self.all_position)
+
+
+            
+            
+
+
+        
 '''
 Main pour tester les fonctionnalitées
 '''
@@ -266,10 +436,12 @@ game.button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
 game.button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
 game.button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
 game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
-
 #Main loops
 while game.getWhileValue():
     game.itemDetector(game.clicManager())
+    game.display.onkeypress(game.BoatVertical,'Right')
+    game.display.onkeypress(game.BoatHorizontal,'Left')
+    game.display.listen()
 print("You have now started the game")
 while True:
     game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
