@@ -290,8 +290,8 @@ class engineBattleShip:
                     self.drawing_turtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
-                    test=position[1]-self.square_size*(self.boatClic[0]-1)
-                    if test>=-302:
+                    self.testv=position[1]-self.square_size*(self.boatClic[0]-1)
+                    if self.testv>=-302:
                         self.drawing_turtle.penup()
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.pendown()
@@ -354,8 +354,8 @@ class engineBattleShip:
         if self.boatClic==(3,"sous-marin"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.sous_marin.append((position[0],position[1]+i))
-                    self.all_position.append((position[0],position[1]+i))
+                        self.sous_marin.append((position[0],position[1]+i))
+                        self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
                     self.sous_marin.append((position[0]+i,position[1])) 
@@ -436,6 +436,7 @@ game.button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
 game.button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
 game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
 #Main loops
+print("Get rekt mom")
 while game.getWhileValue():
     game.itemDetector(game.clicManager())
     game.display.onkeypress(game.BoatVertical,'Right')
