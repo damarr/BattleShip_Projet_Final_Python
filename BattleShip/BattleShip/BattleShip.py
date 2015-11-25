@@ -192,12 +192,17 @@ class engineBattleShip:
         self.croiseur=[]
         self.porte_avions=[]
         self.all_position=[]
+
     '''
     Efface tout dans la fenêtre
     '''
 
     def clear(self):
         self.display.clear()
+
+    '''
+    Booléen sur lequel on boucle tant qu'on appuie pas sur START
+    '''
 
     def getWhileValue(self):
         return self.whileValue
@@ -544,34 +549,34 @@ class engineBattleShip:
             else:
                 for i in range (self.boatClic[0]):
                     self.contre_torpilleur.append((position[0]+i,position[1])) 
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                    self.all_position.append((position[0]+i,position[1])) 
 
 
         if self.boatClic==(5,"porte-avions"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.porte_avions.append((position[0]-2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                    self.porte_avions.append((position[0],position[1]+i))
+                    self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
-                    self.porte_avions.append((position[0]-2+i,position[1]-2))
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                    self.porte_avions.append((position[0]+i,position[1]))
+                    self.all_position.append((position[0]+i,position[1])) 
 
                        
         if self.boatClic==(4,"croiseur"):
             if self.orientation==True:
                 for i in range (self.boatClic[0]):
-                    self.croiseur.append((position[0]--2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                    self.croiseur.append((position[0],position[1]+i))
+                    self.all_position.append((position[0],position[1]+i))
             else:
                 for i in range (self.boatClic[0]):
-                    self.croiseur.append((position[0]-2+i,position[1]-2))
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                    self.croiseur.append((position[0]+i,position[1]))
+                    self.all_position.append((position[0]+i,position[1])) 
         print(self.porte_avions)
         print(self.all_position)
 
             
-            
+       
 
 
         
@@ -606,5 +611,4 @@ while game.getWhileValue():
     game.display.listen()
 print("You have now started the game")
 while True:
-    game.windowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
     game.itemDetector(game.clicManager())
