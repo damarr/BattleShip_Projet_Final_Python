@@ -3,7 +3,7 @@
 
 # -*- coding: utf-8 -*-
 
-import ujson as json
+import json
 import socket, time
 
 class Protestation(Exception):
@@ -192,6 +192,7 @@ class engineBattleShip:
         self.croiseur=[]
         self.porte_avions=[]
         self.all_position=[]
+        self.is_a_boat=False
     '''
     Efface tout dans la fenêtre
     '''
@@ -443,10 +444,11 @@ class engineBattleShip:
             print(self.orientation)
 
     def boatButton(self,position):
+        
         squarePosition=self.getClickedSquare()
-        self.xsquarePosition=squarePosition[0]
-        self.ysquarePosition=squarePosition[1]
+        self.isThereABoat(squarePosition)
         if squarePosition != (None,None):
+            
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
                     self.square_size = 38
@@ -454,7 +456,8 @@ class engineBattleShip:
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
                     self.testv=position[1]-self.square_size*(self.boatClic[0]-1)
-                    if self.testv>=-302:
+                    self.testh=position[0]-self.square_size*(self.boatClic[0]-1)
+                    if self.testv>=-302 and self.is_a_boat==False:
                         self.drawing_turtle.penup()
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.pendown()
@@ -472,8 +475,8 @@ class engineBattleShip:
                     self.drawing_turtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
-                    test=position[0]+self.square_size*(self.boatClic[0]-1)
-                    if test <= 152:
+                    self.testh=position[0]+self.square_size*(self.boatClic[0]-1)
+                    if self.testh <= 152 and self.is_a_boat==False:
                         self.drawing_turtle.penup()
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.pendown()
@@ -514,65 +517,102 @@ class engineBattleShip:
 
         
     def boatDict(self, position):
+        self.squarePosition=position
+        self.isThereABoat(self.squarePosition)
         if self.boatClic==(3,"sous-marin"):
             if self.orientation==True:
-                for i in range (self.boatClic[0]):
-                        self.sous_marin.append((position[0],position[1]+i))
-                        self.all_position.append((position[0],position[1]+i))
+                if self.testv>=-302 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                            self.sous_marin.append((position[0],position[1]+i))
+                            self.all_position.append((position[0],position[1]+i))
             else:
-                for i in range (self.boatClic[0]):
-                    self.sous_marin.append((position[0]+i,position[1])) 
-                    self.all_position.append((position[0]+i,position[1])) 
+                if self.testh <= 152 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.sous_marin.append((position[0]+i,position[1])) 
+                        self.all_position.append((position[0]+i,position[1])) 
 
 
         if self.boatClic==(2,"torpilleur"):
             if self.orientation==True:
-                for i in range (self.boatClic[0]):
-                    self.torpilleur.append((position[0],position[1]+i))
-                    self.all_position.append((position[0],position[1]+i))
+                if self.testv>=-302 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.torpilleur.append((position[0],position[1]+i))
+                        self.all_position.append((position[0],position[1]+i))
             else:
-                for i in range (self.boatClic[0]):
-                    self.torpilleur.append((position[0]+i,position[1])) 
-                    self.all_position.append((position[0]+i,position[1])) 
+                if self.testh <= 152 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.torpilleur.append((position[0]+i,position[1])) 
+                        self.all_position.append((position[0]+i,position[1])) 
 
         
         if self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
-                for i in range (self.boatClic[0]):
-                    self.contre_torpilleur.append((position[0],position[1]+i))
-                    self.all_position.append((position[0],position[1]+i))
+                if self.testv>=-302 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.contre_torpilleur.append((position[0],position[1]+i))
+                        self.all_position.append((position[0],position[1]+i))
             else:
-                for i in range (self.boatClic[0]):
-                    self.contre_torpilleur.append((position[0]+i,position[1])) 
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                if self.testh <= 152 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.contre_torpilleur.append((position[0]+i,position[1])) 
+                        self.all_position.append((position[0]-2+i,position[1]-2)) 
 
 
         if self.boatClic==(5,"porte-avions"):
             if self.orientation==True:
-                for i in range (self.boatClic[0]):
-                    self.porte_avions.append((position[0]-2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                if self.testv>=-302 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.porte_avions.append((position[0]-2,position[1]-2+i))
+                        self.all_position.append((position[0]-2,position[1]-2+i))
             else:
-                for i in range (self.boatClic[0]):
-                    self.porte_avions.append((position[0]-2+i,position[1]-2))
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                if self.testh<=152 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.porte_avions.append((position[0]-2+i,position[1]-2))
+                        self.all_position.append((position[0]-2+i,position[1]-2)) 
 
                        
         if self.boatClic==(4,"croiseur"):
             if self.orientation==True:
-                for i in range (self.boatClic[0]):
-                    self.croiseur.append((position[0]--2,position[1]-2+i))
-                    self.all_position.append((position[0]-2,position[1]-2+i))
+                if self.testv>=-302 and self.is_a_boat==False:
+                    for i in range (self.boatClic[0]):
+                        self.croiseur.append((position[0]--2,position[1]-2+i))
+                        self.all_position.append((position[0]-2,position[1]-2+i))
             else:
-                for i in range (self.boatClic[0]):
-                    self.croiseur.append((position[0]-2+i,position[1]-2))
-                    self.all_position.append((position[0]-2+i,position[1]-2)) 
+                if self.testh<=152 and self.is_a_boat==False:    
+                    for i in range (self.boatClic[0]):
+                        self.croiseur.append((position[0]-2+i,position[1]-2))
+                        self.all_position.append((position[0]-2+i,position[1]-2)) 
         print(self.porte_avions)
         print(self.all_position)
 
-            
-            
+    def isThereABoat(self, position):
+        if self.boatClic==(3,"sous-marin"):
+            if self.orientation==True:
+                if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
 
+            if self.orientation==False:
+                if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
+
+
+        if self.boatClic==(3,"contre-torpilleur"):
+            if self.orientation==True:
+                if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0]+2,position[1]+2) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
+
+            if self.orientation==False:
+                if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
+        print(self.is_a_boat)
 
         
 '''
