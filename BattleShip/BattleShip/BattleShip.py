@@ -1,6 +1,5 @@
 ﻿# Welcome and have fun programming!
 # Project by Damien Arroyo, William and Nadia.
-#Testerino
 
 # -*- coding: utf-8 -*-
 
