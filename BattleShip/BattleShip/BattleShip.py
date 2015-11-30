@@ -411,11 +411,15 @@ class engineBattleShip(ClientReseau):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
                         self.squareSizeAtt=self.getGridSquareSize("Attack Grid")
                         self.squareSizeShot=self.getGridSquareSize("Shot Grid")
+
+                        if key == "Shot Grid" and self.getWhileValue() != True:
+                            print("You're trying to shoot an enemy")
+
                         if self.boatClic != (None,None):
                             if key != "Shot Grid":
                                 
                                 self.boatButton(self.gridDecomposer(key,clicPosition))
-                                print("Thos should work" + str(self.boatClic[0]))
+                                print("This should work" + str(self.boatClic[0]))
                                 self.boatClic = (None,None)
             
                     elif (shortcut[1] == (0,0)):
