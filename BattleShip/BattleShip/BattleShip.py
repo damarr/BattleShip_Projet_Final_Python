@@ -183,6 +183,9 @@ class engineBattleShip(ClientReseau):
         self.orientation=True
         self.drawing_turtle=turtle.Turtle()
         self.drawing_turtle.fillcolor("gray")
+        self.attackTurtle = turtle.Turtle()
+        self.attackTurtle.hideturtle()
+        self.attackTurtle.penup()
         self.boatClic = (None,None)
         self.squareSizeAtt = 0
         self.squareSizeShot = 0
@@ -409,14 +412,21 @@ class engineBattleShip(ClientReseau):
                     shortcut = self.itemdictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
-                        self.squareSizeAtt=self.getGridSquareSize("Attack Grid")
-                        self.squareSizeShot=self.getGridSquareSize("Shot Grid")
+                        self.squareSizeAtt = self.getGridSquareSize("Attack Grid")
+                        self.squareSizeShot = self.getGridSquareSize("Shot Grid")
 
                         if key == "Shot Grid" and self.getWhileValue() != True:
-                            print("You're trying to shoot an enemy")
+                            self.attackTurtle.goto(self.gridDecomposer("Shot Grid",clicPosition))
+                            self.attackedSquare = self.getClickedSquare()
+                            self.attackTurtle.begin_fill()
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2,self.attackTurtle.pos()[1])
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2)
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2, self.attackTurtle.pos()[1])
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2)
+                            self.attackTurtle.end_fill()
 
                         if self.boatClic != (None,None):
-                            if key != "Shot Grid":
+                            if key != "Shot Grid" and self.getWhileValue() == True:
                                 
                                 self.boatButton(self.gridDecomposer(key,clicPosition))
                                 print("This should work" + str(self.boatClic[0]))
