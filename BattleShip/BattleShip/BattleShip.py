@@ -350,7 +350,7 @@ class engineBattleShip(ClientReseau):
         posY = victimTurtle.position()[1]
         if posX != 0.00 and posY != 0.00:
             for key in self.itemdictionary:
-                temp = self.itemDictionary.get(key)[0]
+                temp = self.itemdictionary.get(key)[0]
                 lenght = temp[0]
                 height = temp[1]
                 temp = self.itemdictionary.get(key)[3]
