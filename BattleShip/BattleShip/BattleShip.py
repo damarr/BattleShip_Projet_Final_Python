@@ -166,14 +166,14 @@ import time
 import os
 import webbrowser
 
-class engineBattleShip(ClientReseau):
+class engineBattleShip:
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
         self.display.setup(sizeWidth,sizeHeight)
-        self.itemdictionary = {}
-        self.turtlekiller = []
+        self.itemDictionary = {}
+        self.turtleKiller = []
         self.x = 0
         self.y = 0
         self.startTime = 0
@@ -222,7 +222,7 @@ class engineBattleShip(ClientReseau):
         imageTurtle.shape(os.path.abspath(path))
         imageTurtle.goto(posX,posY)
         #[(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
-        self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
+        self.itemDictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
 
     '''
     Permet de changer de partie du programme
@@ -284,7 +284,7 @@ class engineBattleShip(ClientReseau):
         basicTurtle.pendown()
     
         #Adding items to itemDictionary
-        self.itemdictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
+        self.itemDictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
     
     
         #Drawing
@@ -318,14 +318,14 @@ class engineBattleShip(ClientReseau):
     '''
 
     def getRawItemPosition(self,name):
-        return(self.itemdictionary.get(name)[3])
+        return(self.itemDictionary.get(name)[3])
 
     '''
     Permet d'obtenir le nombre de cases en largeur et en hauteur d'une grille entrée (Une valeur car même nombre de cases dans les deux sens).
     '''
 
     def getGridSquareSize(self,name):
-        stuff = self.itemdictionary.get(name)[1]
+        stuff = self.itemDictionary.get(name)[1]
         return(stuff[0])
     
     '''
@@ -333,15 +333,15 @@ class engineBattleShip(ClientReseau):
     '''
 
     def getItemSize(self,name):
-        return(self.itemdictionary.get(name)[0])
+        return(self.itemDictionary.get(name)[0])
 
     '''
     Détecte les clics de l'utilisateur et retourne l'item cliqué ainsi que la position du clic.
     '''
 
     def clicManager(self):
-        self.turtlekiller.append(self.clicTurtle)
-        victimTurtle = self.turtlekiller[0]
+        self.turtleKiller.append(self.clicTurtle)
+        victimTurtle = self.turtleKiller[0]
         victimTurtle._tracer(10,1000)
         victimTurtle.penup()
         victimTurtle.hideturtle()
@@ -349,28 +349,28 @@ class engineBattleShip(ClientReseau):
         posX = victimTurtle.position()[0]
         posY = victimTurtle.position()[1]
         if posX != 0.00 and posY != 0.00:
-            for key in self.itemdictionary:
+            for key in self.itemDictionary:
                 temp = self.itemDictionary.get(key)[0]
                 lenght = temp[0]
                 height = temp[1]
-                temp = self.itemdictionary.get(key)[3]
+                temp = self.itemDictionary.get(key)[3]
                 posXItem = temp[0]
                 posYItem = temp[1]
                 if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY >= posYItem - height):
                     self.clicTurtle.goto(0,0)
                     return((key,(posX,posY)))
-        self.turtlekiller.clear()
+        self.turtleKiller.clear()
 
     '''
     Retourne la position en X et en Y de la case cliquée par l'utilisateur
     '''
 
     def gridDecomposer(self,name,clicPosition):
-        for key in self.itemdictionary:
+        for key in self.itemDictionary:
             if key == name:
-                temp = self.itemdictionary.get(key)[0]
-                temp2 = self.itemdictionary.get(key)[1]
-                tempPosition = self.itemdictionary.get(key)[3]
+                temp = self.itemDictionary.get(key)[0]
+                temp2 = self.itemDictionary.get(key)[1]
+                tempPosition = self.itemDictionary.get(key)[3]
                 pixelPerSquare = temp[0]/temp2[0]
                 clicPosition2 = clicPosition[1]
                 for x in range (temp2[0] + 1):
@@ -404,9 +404,9 @@ class engineBattleShip(ClientReseau):
 
     def itemDetector(self,clicPosition):
         if (clicPosition != None):
-            for key in self.itemdictionary:
+            for key in self.itemDictionary:
                 if (key == clicPosition[0]):
-                    shortcut = self.itemdictionary.get(key)
+                    shortcut = self.itemDictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.gridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
                         self.squareSizeAtt=self.getGridSquareSize("Attack Grid")
@@ -436,21 +436,12 @@ class engineBattleShip(ClientReseau):
             self.display.onkeypress(self.BoatVertical,'Right')
             print(self.orientation)
 
-    '''
-    Permet de placer les bateaux à la verticale avec la flèche de droite
-    '''
-
-
     def BoatHorizontal(self):
         if self.getWhileValue()==True:
             self.display.onkeypress(None,'Left')
             self.orientation=False
             self.display.onkeypress(self.BoatHorizontal,'Left')
             print(self.orientation)
-
-    '''
-    Permet de placer les bateaux à l'horizontal avec la flèche de gauche
-    '''
 
     def boatButton(self,position):
         
@@ -497,10 +488,6 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.end_fill()
             self.boatDict(squarePosition)
 
-    '''
-    Fonction qui permet au clique suivant le clique sur un bouton bateau de placer le bateau dans la grille
-    '''
-
     def boat(self,key):
         if key == "sous-marin":
             if self.sous_marin==[]:
@@ -528,9 +515,6 @@ class engineBattleShip(ClientReseau):
             else:
                 print("This ship is already on the map")
 
-    '''
-    Permet au programme de différencier quel bateau est placé sur la grille suite au clique
-    '''
         
     def boatDict(self, position):
         self.squarePosition=position
@@ -598,15 +582,13 @@ class engineBattleShip(ClientReseau):
                     for i in range (self.boatClic[0]):
                         self.croiseur.append((position[0]-2+i,position[1]-2))
                         self.all_position.append((position[0]-2+i,position[1]-2)) 
-
-    '''
-    Insère les positions des navires en mémoire
-    '''
+        print(self.porte_avions)
+        print(self.all_position)
 
     def isThereABoat(self, position):
         if self.boatClic==(3,"sous-marin"):
             if self.orientation==True:
-                if (position[0],position[1]) or (position[0],position[1]+1) or (position[0],position[1]+2) in self.all_position:
+                if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
@@ -630,70 +612,7 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-    '''
-    Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. Si un bateau se trouve sur l'une des cases
-    prises par le navire que l'on cherche à placer, la fonction retournera True, ce qui empêchera de placer le navire.
-    '''
-    
-    def damage(self, attack):
-        if attack is None:
-            print('Your ennemy did not attack yet, wait your turn')
-            time.sleep(2)
-            self.damage(ClientReseau.rapporter())
-        else:
-            if attack in self.torpilleur:
-                self.torpilleur.remove(attack)
-                self.all_position.remove(attack)
-                if self.torpilleur == []:
-                    ClientReseau.rapporter('Coulé!')
-                    if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
-            elif attack in self.contre_torpilleur:
-                self.contre_torpilleur.remove(attack)
-                self.all_position.remove(attack)
-                if self.contre_torpilleur == []:
-                    ClientReseau.rapporter('Coulé!')
-                    if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
-            elif attack in self.croiseur:
-                self.croiseur.remove(attack)
-                self.all_position.remove(attack)
-                if self.croiseur == []:
-                    ClientReseau.rapporter('Coulé!')
-                    if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
-            elif attack in self.porte_avions:
-                self.porte_avions.remove(attack)
-                self.all_position.remove(attack)
-                if self.porte_avions == []:
-                    ClientReseau.rapporter('Coulé!')
-                    if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
-            elif attack in self.sous_marin:
-                self.sous_marin.remove(attack)
-                self.all_position.remove(attack)
-                if self.sous_marin == []:
-                    ClientReseau.rapporter('Coulé!')
-                    if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
-            else:
-                ClientReseau.rapporter("À l'eau!")
-
-
-    '''
-    Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-    '''
-
-
-
-
-    
-
-
-         
-             
-
-
+        print(self.is_a_boat)
 
         
 '''
