@@ -620,6 +620,7 @@ class engineBattleShip(ClientReseau):
 
     def IsThereABoat(self, position):
 
+
         if self.boatClic==(3,"sous-marin") or self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
@@ -627,7 +628,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-            if self.orientation==False:
+            elif self.orientation==False:
                 if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position:
                     self.is_a_boat=True
                 else:
@@ -640,6 +641,14 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
+
+            elif self.orientation==False:
+                if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
+
+
 
             if self.orientation==False:
                 if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position:
@@ -655,7 +664,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-            if self.orientation==False:
+            elif self.orientation==False:
                 if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position or (position[0],position[1]+3) in self.all_position:
                     self.is_a_boat=True
                 else:
@@ -669,12 +678,25 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-            if self.orientation==False:
+            elif self.orientation==False:
                 if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
 
+
+        if self.boatClic==(3,"porte-avions"):
+            if self.orientation==True:
+                if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
+
+            elif self.orientation==False:
+                if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position or (position[0]+2,position[1]) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
+                    self.is_a_boat=True
+                else:
+                    self.is_a_boat=False
 
     '''
     Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. Si un bateau se trouve sur l'une des cases
