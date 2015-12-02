@@ -419,10 +419,11 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2,self.attackTurtle.pos()[1])
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2)
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2, self.attackTurtle.pos()[1])
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2)
+                            correction = 4
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2 - correction)
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
+                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
 
                         if self.boatClic != (None,None):
