@@ -161,6 +161,7 @@ class engineBattleShip(ClientReseau):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
         self.username=self.GetUserName()
+        self.otherplayer=self.GetOtherName()
         self.client = ClientReseau(self.username)
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
@@ -192,6 +193,14 @@ class engineBattleShip(ClientReseau):
     def GetUserName(self): #a ameliorer un peu
         ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
         return self.display.textinput("Votre pseudo", "Entrez votre nom de joueur : ")
+    
+    def GetOtherName(self): #a ameliorer un peu
+        ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
+        self.otherplayerstring=self.display.textinput("Votre adversaire", "Entrez le nom du joueur adverse, laissez vide pour être assigné aléatoirement : ")
+        if self.otherplayerstring=='':
+            return None
+        else:
+            return self.otherplayerstring
 
     def Clear(self):
         ''' Efface tout dans la fenêtre '''
