@@ -1,24 +1,23 @@
 ﻿# Welcome and have fun programming!
 # Project by Damien Arroyo, William and Nadia.
+# AWESOME !
 
 # -*- coding: utf-8 -*-
 
-import json
-import socket, time
+import json, socket, time, turtle, os, webbrowser
 
 class Protestation(Exception):
     pass
 
 class ClientReseau(object):
     """Client réseau pour jeu en-ligne.
-
     :param pseudo: votre pseudonyme.
     :param adversaire: le pseudonyme de l'adversaire que vous désirez affronter, None fera un pairage aléatoire.
     :param serveur: l'adresse ou le nom de l'hôte du serveur de jeu.
-    :param port: le port du serveur de jeu.
-    """
+    :param port: le port du serveur de jeu."""
 
     def __init__(self, pseudo, *, adversaire=None, serveur='python.gel.ulaval.ca', port=31415):
+        ''' Initialisation du jeu '''
         self.pseudo = pseudo
         self.adv = adversaire
         self.serveur = serveur
@@ -38,6 +37,45 @@ class ClientReseau(object):
         """Retourne le pseudonyme de votre adversaire."""
         return self.adv
 
+    def __connecter(self):
+        """ Communique avec le serveur de jeu pour créer une partie.
+        :returns: un dictionnaire contenant une clé 'joueurs' à laquelle
+        est associée un tuple de pseudonymes de joueurs. """
+        requete = {"requête": "créer", "pseudo": self.pseudo, "adversaire": self.adv}
+        self.__envoyer(requete)
+        return self.__recevoir_sync()
+
+    def __envoyer(self, requete):
+        """Envoie une requête au serveur de jeu sous la forme d'une chaîne
+        de caractères JSON.
+        """
+        self.socket.sendall(bytes("\x02" + json.dumps(requete) + "\x03", "utf-8"))
+
+    def __recevoir(self):
+        """Reçoit du serveur de jeu une chaîne de caractères et retourne
+        un dictionnaire ou None si aucune réponse valide n'a été reçue.
+        """
+        self.tampon += str(self.socket.recv(4096), "utf-8")
+        fin = self.tampon.rfind("\x03")
+        debut = self.tampon[:fin].rfind("\x02")
+
+        if debut < 0 or fin < 0:
+            return None
+
+        try:
+            reponse = json.loads(self.tampon[debut + 1:fin])
+        except ValueError:
+            raise ValueError("Le serveur nous a répondu un message "
+                             "incompréhensible: '{}'".format(self.tampon))
+        else:
+            self.tampon = self.tampon[fin + 1:]
+
+        if "erreur" in reponse:
+            raise Exception(reponse["erreur"])
+        if reponse.get('requête') == 'protester':
+            raise Protestation(reponse['message'])
+        return reponse
+
     def attaquer(self, cellule=None):
         """Transmet au serveur la cellule de votre attaque. Cette cellule est constituée d'un
         tuple de deux indices compris entre 0 et 9.
@@ -48,8 +86,7 @@ class ClientReseau(object):
 
         Cette fonction retourne None si aucune réponse de votre adversaire n'a été obtenue
         à temps par le serveur de jeu. Dans ce cas, vous devez rappeler la fonction sans argument
-        jusqu'à ce vous obteniez une réponse (de préférence, introduire un délai entre les appels).
-        """
+        jusqu'à ce vous obteniez une réponse (de préférence, introduire un délai entre les appels)."""
         assert cellule is None or self.attaque_envoyee == False, ("Vous devez attendre la réponse"
                                                                   "avant d'envoyer une nouvelle"
                                                                   "attaque")
@@ -91,53 +128,16 @@ class ClientReseau(object):
 
     def protester(self, message):
         """Soulève une exception du type 'Protestation' aux deux joueurs de la partie.
-        :param message: Le message de l'exception.
-        """
+        :param message: Le message de l'exception."""
         requete = {'requête': 'protester', 'message': message}
         self.__envoyer(requete)
         self.__recevoir_sync()  # On reçoit une copie du message envoyé
 
-    def __connecter(self):
-        """Communique avec le serveur de jeu pour créer une partie.
 
-        :returns: un dictionnaire contenant une clé 'joueurs' à laquelle
-        est associée un tuple de pseudonymes de joueurs.
-        """
-        requete = {"requête": "créer", "pseudo": self.pseudo, "adversaire": self.adv}
 
-        self.__envoyer(requete)
-        return self.__recevoir_sync()
 
-    def __envoyer(self, requete):
-        """Envoie une requête au serveur de jeu sous la forme d'une chaîne
-        de caractères JSON.
-        """
-        self.socket.sendall(bytes("\x02" + json.dumps(requete) + "\x03", "utf-8"))
 
-    def __recevoir(self):
-        """Reçoit du serveur de jeu une chaîne de caractères et retourne
-        un dictionnaire ou None si aucune réponse valide n'a été reçue.
-        """
-        self.tampon += str(self.socket.recv(4096), "utf-8")
-        fin = self.tampon.rfind("\x03")
-        debut = self.tampon[:fin].rfind("\x02")
 
-        if debut < 0 or fin < 0:
-            return None
-
-        try:
-            reponse = json.loads(self.tampon[debut + 1:fin])
-        except ValueError:
-            raise ValueError("Le serveur nous a répondu un message "
-                             "incompréhensible: '{}'".format(self.tampon))
-        else:
-            self.tampon = self.tampon[fin + 1:]
-
-        if "erreur" in reponse:
-            raise Exception(reponse["erreur"])
-        if reponse.get('requête') == 'protester':
-            raise Protestation(reponse['message'])
-        return reponse
 
     def __recevoir_sync(self):
         """Reçoit un message complet de façon synchrone, c'est-à-dire qu'on
@@ -161,17 +161,16 @@ class ClientReseau(object):
         self.socket.setblocking(1)
         return reponse
 
-import turtle
-import time
-import os
-import webbrowser
+
 
 class engineBattleShip(ClientReseau):
+    ''' Description de la classe ici ''' 
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
         self.display.setup(sizeWidth,sizeHeight)
+        self.username=self.GetUserName()
         self.itemdictionary = {}
         self.turtlekiller = []
         self.x = 0
@@ -196,29 +195,25 @@ class engineBattleShip(ClientReseau):
         self.porte_avions=[]
         self.all_position=[]
         self.is_a_boat=False
-    '''
-    Efface tout dans la fenêtre
-    '''
+
+    def GetUserName(self):
+        ''' Module demandant le pseudo de l'utilisateur '''
+        return self.display.textinput("Votre pseudo", "Entrez votre nom de joueur : ")
 
     def Clear(self):
+        ''' Efface tout dans la fenêtre '''
         self.display.clear()
 
     def GetWhileValue(self):
         return self.whileValue
 
-    '''
-    Change le fond d'écran de la fenêtre
-    '''
-
     def BgImage(self,path):
+        ''' Change le fond d'écran de la fenêtre '''
         self.display.bgpic(os.path.abspath(path))
 
-    '''
-    Crée des boutons qui prennent l'apparence d'images
-    Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image.
-    '''
-
     def Button(self,name,path,posX,posY,lenght,height): #not 100% good yet
+        ''' Crée des boutons qui prennent l'apparence d'images
+        Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image '''
         imageTurtle = turtle.Turtle()
         imageTurtle.penup()
         self.display.addshape(os.path.abspath(path))
@@ -227,31 +222,20 @@ class engineBattleShip(ClientReseau):
         #[(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
         self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
 
-    '''
-    Permet de changer de partie du programme
-    '''
-
     def StartButton(self):
+        ''' Permet de changer de partie du programme '''
         self.whileValue = False
 
-    '''
-    Quite le programme.
-    '''
-
     def ExitButton(self):
+        ''' Quitte le programme '''
         self.display.bye()
 
-    '''
-    Ouvre une page internet.
-    '''
-
     def InfoButton(self):
+        ''' Ouvre une page internet '''
         webbrowser.open("https://github.com/Damfurrywolf/BattleShip_Projet_Final_Python")
 
-    '''
-    Envoie une "notification à l'utilisateur en changeant le titre de la fenêtre"
-    '''
     def WindowTitleNotification(self,text1,text2,timeToElapse):
+        ''' Envoie une notification à l'utilisateur en changeant le titre de la fenêtre '''
         timeNow = time.time()
         if (timeNow - self.startTime) >= timeToElapse:
             if self.title == text1:
@@ -389,11 +373,8 @@ class engineBattleShip(ClientReseau):
         positionFinal = (positionX,positionY)
         return (positionFinal)
 
-    '''
-    Retourne la case cliquée en case et non en pixel
-    '''
-
     def GetClickedSquare(self):
+        ''' Retourne la case cliquée en case et non en pixel '''
         if self.caseX != None and self.caseY != None:
             transitionX = self.caseX
             transitionY = self.caseY
@@ -401,11 +382,8 @@ class engineBattleShip(ClientReseau):
             self.caseY = None
             return ((transitionX-1,transitionY-1))
     
-    '''
-    Permet de gérer n'importe quel item ajouté dans le dictionaire d'items
-    '''
-
     def ItemDetector(self,clicPosition):
+        ''' Permet de gérer n'importe quel item ajouté dans le dictionaire d'items '''
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
@@ -445,34 +423,26 @@ class engineBattleShip(ClientReseau):
                             self.orientation=True
 
     def BoatVertical(self):
+        ''' Permet de placer les bateaux à la verticale avec la flèche de droite '''
         if self.GetWhileValue()==True:
             self.display.onkeypress(None,'Right')
             self.orientation=True
             self.display.onkeypress(self.BoatVertical,'Right')
             print(self.orientation)
 
-    '''
-    Permet de placer les bateaux à la verticale avec la flèche de droite
-    '''
-
-
     def BoatHorizontal(self):
+        ''' Permet de placer les bateaux à l'horizontale avec la flèche de gauche '''
         if self.GetWhileValue()==True:
             self.display.onkeypress(None,'Left')
             self.orientation=False
             self.display.onkeypress(self.BoatHorizontal,'Left')
             print(self.orientation)
 
-    '''
-    Permet de placer les bateaux à l'horizontal avec la flèche de gauche
-    '''
-
     def BoatButton(self,position):
-        
+        ''' Fonction qui permet au click suivant le click sur une icone bateau de placer le bateau dans la grille '''
         squarePosition=self.GetClickedSquare()
         self.IsThereABoat(squarePosition)
         if squarePosition != (None,None):
-            
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
                     self.square_size = 38
@@ -490,10 +460,7 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
                         self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
                         self.drawing_turtle.goto(self.color_x,self.color_y)
-                        self.drawing_turtle.end_fill()
-
-                        
-
+                        self.drawing_turtle.end_fill()        
                 else:
                     self.square_size = 38
                     self.drawing_turtle.penup()
@@ -512,11 +479,8 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.end_fill()
             self.BoatDict(squarePosition)
 
-    '''
-    Fonction qui permet au clique suivant le clique sur un bouton bateau de placer le bateau dans la grille
-    '''
-
     def Boat(self,key):
+        ''' Permet au programme de différencier quel bateau est placé sur la grille suite au clique '''
         if key == "sous-marin":
             if self.sous_marin==[]:
                 self.boatClic = (3,"sous-marin")
@@ -542,12 +506,9 @@ class engineBattleShip(ClientReseau):
               self.boatClic = (4,"croiseur")
             else:
                 print("This ship is already on the map")
-
-    '''
-    Permet au programme de différencier quel bateau est placé sur la grille suite au clique
-    '''
         
     def BoatDict(self, position):
+        ''' Insère les positions des navires en mémoire '''
         self.squarePosition=position
         self.IsThereABoat(self.squarePosition)
         if self.boatClic==(3,"sous-marin"):
@@ -559,8 +520,8 @@ class engineBattleShip(ClientReseau):
             else:
                 if self.testh <= 152 and self.is_a_boat==False:
                     for i in range (self.boatClic[0]):
-                        self.sous_marin.append((position[0]+i,position[1])) 
-                        self.all_position.append((position[0]+i,position[1])) 
+                        self.sous_marin.append((position[0]+i,position[1]))
+                        self.all_position.append((position[0]+i,position[1]))
 
 
         if self.boatClic==(2,"torpilleur"):
@@ -573,8 +534,7 @@ class engineBattleShip(ClientReseau):
                 if self.testh <= 152 and self.is_a_boat==False:
                     for i in range (self.boatClic[0]):
                         self.torpilleur.append((position[0]+i,position[1])) 
-                        self.all_position.append((position[0]+i,position[1])) 
-
+                        self.all_position.append((position[0]+i,position[1]))
         
         if self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
@@ -600,7 +560,6 @@ class engineBattleShip(ClientReseau):
                     for i in range (self.boatClic[0]):
                         self.porte_avions.append((position[0]-2+i,position[1]-2))
                         self.all_position.append((position[0]-2+i,position[1]-2)) 
-
                        
         if self.boatClic==(4,"croiseur"):
             if self.orientation==True:
@@ -614,13 +573,10 @@ class engineBattleShip(ClientReseau):
                         self.croiseur.append((position[0]-2+i,position[1]-2))
                         self.all_position.append((position[0]-2+i,position[1]-2)) 
 
-    '''
-    Insère les positions des navires en mémoire
-    '''
-
     def IsThereABoat(self, position):
-
-
+        ''' Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. 
+        Si un bateau se trouve sur l'une des cases prises par le navire que l'on cherche à placer, 
+        la fonction retournera True, ce qui empêchera de placer le navire. '''
         if self.boatClic==(3,"sous-marin") or self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
@@ -633,7 +589,6 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-
         
         if self.boatClic==(2,"torpilleur"):
             if self.orientation==True:
@@ -648,14 +603,11 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-
-
             if self.orientation==False:
                 if (position[0],position[1]) in self.all_position or (position[0]+1,position[1]) in self.all_position:
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-
 
         if self.boatClic==(4,"croiseur"):
             if self.orientation==True:
@@ -670,7 +622,6 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-
         if self.boatClic==(3,"porte-avions"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
@@ -697,13 +648,9 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-
-    '''
-    Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. Si un bateau se trouve sur l'une des cases
-    prises par le navire que l'on cherche à placer, la fonction retournera True, ce qui empêchera de placer le navire.
-    '''
     
     def Damage(self, attack):
+    #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
         if attack is None:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
@@ -747,27 +694,6 @@ class engineBattleShip(ClientReseau):
             else:
                 ClientReseau.rapporter("À l'eau!")
 
-
-    '''
-    Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-    '''
-
-
-
-
-
-    '''
-    Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-    '''
-
-
-
-
-    
-
-
-         
-             
 
 
 
