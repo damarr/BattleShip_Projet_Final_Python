@@ -9,7 +9,7 @@ import json, socket, time, turtle, os, webbrowser
 class Protestation(Exception):
     pass
 
-class ClientReseau(object):
+class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='python.gel.ulaval.ca', port=31415)
     """Client réseau pour jeu en-ligne.
     :param pseudo: votre pseudonyme.
     :param adversaire: le pseudonyme de l'adversaire que vous désirez affronter, None fera un pairage aléatoire.
@@ -133,12 +133,6 @@ class ClientReseau(object):
         self.__envoyer(requete)
         self.__recevoir_sync()  # On reçoit une copie du message envoyé
 
-
-
-
-
-
-
     def __recevoir_sync(self):
         """Reçoit un message complet de façon synchrone, c'est-à-dire qu'on
         attend qu'un dictionnaire complet ait pu être décodé avant de quitter
@@ -161,17 +155,16 @@ class ClientReseau(object):
         self.socket.setblocking(1)
         return reponse
 
-
-
 class engineBattleShip(ClientReseau):
     ''' Description de la classe ici ''' 
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
-        self.whileValue = True
-        self.clicTurtle = turtle.Turtle()
         self.display.setup(sizeWidth,sizeHeight)
         self.username=self.GetUserName()
-        self.itemdictionary = {}
+        self.client = ClientReseau(self.username)
+        self.whileValue = True
+        self.clicTurtle = turtle.Turtle()
+        self.itemdictionary = {} #initialisation du dictionnaire
         self.turtlekiller = []
         self.x = 0
         self.y = 0
@@ -196,8 +189,8 @@ class engineBattleShip(ClientReseau):
         self.all_position=[]
         self.is_a_boat=False
 
-    def GetUserName(self):
-        ''' Module demandant le pseudo de l'utilisateur '''
+    def GetUserName(self): #a ameliorer un peu
+        ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
         return self.display.textinput("Votre pseudo", "Entrez votre nom de joueur : ")
 
     def Clear(self):
@@ -249,14 +242,10 @@ class engineBattleShip(ClientReseau):
                 self.display.title(text1)
             self.startTime = time.time()
 
-    '''
-    Fonction qui crée des grilles.
-    Besoin: d'un nom pour la grille, le nombre de cases en largeur ou hauteur, l'espace désiré laissé sur les côtés,
-    une position en X et en Y, une couleur en style RGB our la couleur de la grille et une couleur en type RGB pour le remplisage
-    '''
-
     def DrawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
-        #Initiation of turtle
+        ''' Fonction qui crée des grilles
+        Besoin: d'un nom pour la grille, le nombre de cases en largeur ou hauteur, l'espace désiré laissé sur les côtés,
+        une position en X et en Y, une couleur en style RGB our la couleur de la grille et une couleur en type RGB pour le remplisage '''
         pixelPerSquare = (windowWidth - 2*margin)/nbHeight
         compensation = windowWidth/2
         basicTurtle = turtle.Turtle()
@@ -272,8 +261,7 @@ class engineBattleShip(ClientReseau):
     
         #Adding items to itemDictionary
         self.itemdictionary[itemName] = [(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
-    
-    
+
         #Drawing
         basicTurtle.begin_fill()
         for x in range (4):
@@ -300,33 +288,24 @@ class engineBattleShip(ClientReseau):
             basicTurtle.back(windowWidth - 2*margin)
             basicTurtle.penup()
 
-    '''
-    Retourne la position de l'item entré.
-    '''
 
     def GetRawItemPosition(self,name):
+        ''' Retourne la position de l'item entré '''
         return(self.itemdictionary.get(name)[3])
 
-    '''
-    Permet d'obtenir le nombre de cases en largeur et en hauteur d'une grille entrée (Une valeur car même nombre de cases dans les deux sens).
-    '''
-
     def GetGridSquareSize(self,name):
+        ''' Permet d'obtenir le nombre de cases en largeur et en hauteur d'une grille entrée (Une valeur car même nombre de cases dans les deux sens). '''
         stuff = self.itemdictionary.get(name)[1]
         return(stuff[0])
     
-    '''
-    Permet d'obtenir la largeur et la hauteur dans un tuple d'un objet entré.
-    '''
 
     def GetItemSize(self,name):
+        ''' Permet d'obtenir la largeur et la hauteur dans un tuple d'un objet entré '''
         return(self.itemdictionary.get(name)[0])
 
-    '''
-    Détecte les clics de l'utilisateur et retourne l'item cliqué ainsi que la position du clic.
-    '''
 
     def ClicManager(self):
+        ''' Détecte les clics de l'utilisateur et retourne l'item cliqué ainsi que la position du clic. '''
         self.turtlekiller.append(self.clicTurtle)
         victimTurtle = self.turtlekiller[0]
         victimTurtle._tracer(10,1000)
@@ -654,45 +633,45 @@ class engineBattleShip(ClientReseau):
         if attack is None:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
-            self.Damage(ClientReseau.rapporter())
+            self.Damage(self.client.rapporter())
         else:
             if attack in self.torpilleur:
                 self.torpilleur.remove(attack)
                 self.all_position.remove(attack)
                 if self.torpilleur == []:
-                    ClientReseau.rapporter('Coulé!')
+                    self.client.rapporter('Coulé!')
                     if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
+                        self.client.rapporter('Vous avez gagné')
             elif attack in self.contre_torpilleur:
                 self.contre_torpilleur.remove(attack)
                 self.all_position.remove(attack)
                 if self.contre_torpilleur == []:
-                    ClientReseau.rapporter('Coulé!')
+                    self.client.rapporter('Coulé!')
                     if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
+                        self.client.rapporter('Vous avez gagné')
             elif attack in self.croiseur:
                 self.croiseur.remove(attack)
                 self.all_position.remove(attack)
                 if self.croiseur == []:
-                    ClientReseau.rapporter('Coulé!')
+                    self.client.rapporter('Coulé!')
                     if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
+                        self.client.rapporter('Vous avez gagné')
             elif attack in self.porte_avions:
                 self.porte_avions.remove(attack)
                 self.all_position.remove(attack)
                 if self.porte_avions == []:
-                    ClientReseau.rapporter('Coulé!')
+                    self.client.rapporter('Coulé!')
                     if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
+                        self.client.rapporter('Vous avez gagné')
             elif attack in self.sous_marin:
                 self.sous_marin.remove(attack)
                 self.all_position.remove(attack)
                 if self.sous_marin == []:
-                    ClientReseau.rapporter('Coulé!')
+                    self.client.rapporter('Coulé!')
                     if self.all_position ==[]:
-                        ClientReseau.rapporter('Vous avez gagné')
+                        self.client.rapporter('Vous avez gagné')
             else:
-                ClientReseau.rapporter("À l'eau!")
+                self.client.rapporter("À l'eau!")
 
 
 
@@ -703,12 +682,13 @@ Main pour tester les fonctionnalitées
 '''
 game = engineBattleShip(800,800)
 
+
 #Image de fond
 game.BgImage("image\Background.gif")
 
 #Grids
-game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255)
-game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255)
+game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
 #Boutons
 game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
