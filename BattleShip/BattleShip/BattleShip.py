@@ -16,7 +16,7 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
     :param serveur: l'adresse ou le nom de l'hôte du serveur de jeu.
     :param port: le port du serveur de jeu."""
 
-    def __init__(self, pseudo, *, adversaire=None, serveur='python.gel.ulaval.ca', port=31415):
+    def __init__(self, pseudo, adversaire, serveur='python.gel.ulaval.ca', port=31415):
         ''' Initialisation du jeu '''
         self.pseudo = pseudo
         self.adv = adversaire
@@ -162,7 +162,7 @@ class engineBattleShip(ClientReseau):
         self.display.setup(sizeWidth,sizeHeight)
         self.username=self.GetUserName()
         self.otherplayer=self.GetOtherName()
-        self.client = ClientReseau(self.username)
+        self.client = ClientReseau(self.username,self.otherplayer)
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
         self.itemdictionary = {} #initialisation du dictionnaire
