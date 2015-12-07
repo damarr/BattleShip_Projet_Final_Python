@@ -661,7 +661,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
     
-    def damage(self, attack):
+    def Damage(self, attack):
     #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
         if attack is None:
             print('Your ennemy did not attack yet, wait your turn')
@@ -750,17 +750,14 @@ while game.GetWhileValue():
     game.display.listen()
 print("You have now started the game")
 while True:
-    pootis = game.client.attaquer()
-    if game.turn == True and game.firstTurn == True and game.client.attaquer() != (0,0):
+    if game.turn == True and game.firstTurn == True and game.client.attaquer() != (0,0) and game.client.attaquer() != None:
         game.firstTurn = False
-        #game.damage(game.attaquer())
-        print(game.client.attaquer())
+        game.Damage(game.client.attaquer())
         game.report()
     if game.turn == True:
         game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
     else:
         game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-        #game.damage(game.attaquer())
-        print(game.client.attaquer())
+        game.Damage(game.client.attaquer())
         game.report()
     game.ItemDetector(game.ClicManager())
