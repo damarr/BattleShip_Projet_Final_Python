@@ -411,7 +411,6 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
-                            print(self.AttackPos(self.attackTurtle.pos()))
                             self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
                             self.turn = False
                         if self.boatClic != (None,None):
@@ -751,18 +750,22 @@ while game.GetWhileValue():
     game.display.onkeypress(game.BoatHorizontal,'Left')
     game.display.listen()
 print("You have now started the game")
+print("You are playing against : " + str(game.client.adversaire()))
 while True:
-
     #Actual gameplay
-    if game.turn == False:
-        game.Damage(game.client.attaquer())
-        game.report()
+    tempClient = game.client.attaquer(None)
     if game.turn == True and game.firstTurn == True:
-        tempClient = game.client.attaquer()
         if tempClient != None:
+            print("Hey")
             game.firstTurn = False
             game.Damage(tempClient)
             game.report()
+    elif game.turn == False:
+        if tempClient != None:
+            print("oh")
+            game.Damage(tempClient)
+            game.report()
+    
            
     #Text in window title
     if game.turn == True:
