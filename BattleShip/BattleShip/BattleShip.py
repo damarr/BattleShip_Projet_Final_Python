@@ -411,10 +411,9 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
+                            print(self.AttackPos(self.attackTurtle.pos()))
                             self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
                             self.turn = False
-                        if key != "Shot Grid" and self.GetWhileValue() != True and self.turn:
-                            self.client.attaquer((0,0))
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
@@ -663,11 +662,11 @@ class engineBattleShip(ClientReseau):
     
     def Damage(self, attack):
     #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-        if attack is None and self.whileValue == False:
+        if attack == None and self.whileValue == False:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
-            self.Damage(self.client.attaquer())
-        if attack is None and self.whileValue == True:
+            self.Damage(attack)
+        elif attack == None and self.whileValue == True:
             print('Your ennemy is still placing his boats, please wait')
             time.sleep(2)
         else:
@@ -753,14 +752,22 @@ while game.GetWhileValue():
     game.display.listen()
 print("You have now started the game")
 while True:
-    if game.turn == True and game.firstTurn == True and game.client.attaquer() != (0,0) and game.client.attaquer() != None:
-        game.firstTurn = False
+
+    #Actual gameplay
+    if game.turn == False:
         game.Damage(game.client.attaquer())
         game.report()
+    if game.turn == True and game.firstTurn == True:
+        tempClient = game.client.attaquer()
+        if tempClient != None:
+            game.firstTurn = False
+            game.Damage(tempClient)
+            game.report()
+           
+    #Text in window title
     if game.turn == True:
         game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
     else:
         game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-        game.Damage(game.client.attaquer())
-        game.report()
+        
     game.ItemDetector(game.ClicManager())
