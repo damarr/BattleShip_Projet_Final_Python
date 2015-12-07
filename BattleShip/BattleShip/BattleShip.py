@@ -707,10 +707,10 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter("À l'eau!")
             self.turn = True
     def report(self):
-        if self.rapporter()==None:
+        if self.client.rapporter()==None:
             pass
         else:
-            print(self.rapporter())
+            print(self.client.rapporter())
 
 
 
@@ -750,17 +750,17 @@ while game.GetWhileValue():
     game.display.listen()
 print("You have now started the game")
 while True:
-    pootis = game.attaquer()
-    if game.turn == True and game.firstTurn == True and game.attaquer() != (0,0):
+    pootis = game.client.attaquer()
+    if game.turn == True and game.firstTurn == True and game.client.attaquer() != (0,0):
         game.firstTurn = False
         #game.damage(game.attaquer())
-        print(game.attaquer(None))
+        print(game.client.attaquer())
         game.report()
     if game.turn == True:
         game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
     else:
         game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
         #game.damage(game.attaquer())
-        print(game.attaquer(None))
+        print(game.client.attaquer())
         game.report()
     game.ItemDetector(game.ClicManager())
