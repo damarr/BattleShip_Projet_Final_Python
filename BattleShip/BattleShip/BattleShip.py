@@ -666,7 +666,7 @@ class engineBattleShip(ClientReseau):
         if attack is None:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
-            self.Damage(self.client.rapporter())
+            self.Damage(self.client.attaquer())
         else:
             if attack in self.torpilleur:
                 self.torpilleur.remove(attack)
