@@ -663,10 +663,13 @@ class engineBattleShip(ClientReseau):
     
     def Damage(self, attack):
     #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-        if attack is None:
+        if attack is None and self.whileValue == False:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
             self.Damage(self.client.attaquer())
+        if attack is None and self.whileValue == True:
+            print('Your ennemy is still placing his boats, please wait')
+            time.sleep(2)
         else:
             if attack in self.torpilleur:
                 self.torpilleur.remove(attack)
