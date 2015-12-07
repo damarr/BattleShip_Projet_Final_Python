@@ -190,31 +190,31 @@ class engineBattleShip(ClientReseau):
         self.all_position=[]
         self.is_a_boat=False
 
-    def GetUserName(self): #a ameliorer un peu
-        ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
-        return self.display.textinput("Votre pseudo", "Entrez votre nom de joueur : ")
+    def GetUserName(self): 
+        ''' Function asking your username and send it to the BattleShip init'''
+        return self.display.textinput("Your username", "Enter your username : ")
     
     def GetOtherName(self): #a ameliorer un peu
-        ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
-        self.otherplayerstring=self.display.textinput("Votre adversaire", "Entrez le nom du joueur adverse, laissez vide pour être assigné aléatoirement : ")
+        ''' Function asking your enemy username and send it to the BattleShip init, if nothing is written it will send None'''
+        self.otherplayerstring=self.display.textinput("Your enemy", "Enter your enemy username, let blank for a random enemy : ")
         if self.otherplayerstring=='':
             return None
         else:
             return self.otherplayerstring
 
     def Clear(self):
-        ''' Efface tout dans la fenêtre '''
+        ''' Clear the display '''
         self.display.clear()
 
     def GetWhileValue(self):
         return self.whileValue
 
     def BgImage(self,path):
-        ''' Change le fond d'écran de la fenêtre '''
+        ''' Add a background to the display '''
         self.display.bgpic(os.path.abspath(path))
 
     def Button(self,name,path,posX,posY,lenght,height): #not 100% good yet
-        ''' Crée des boutons qui prennent l'apparence d'images
+        ''' Create buttons, using images in the game folder
         Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image '''
         imageTurtle = turtle.Turtle()
         imageTurtle.penup()
