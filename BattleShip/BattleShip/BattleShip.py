@@ -376,7 +376,7 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
-                            correction = 4
+                            correction = -1
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2 - correction)
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
@@ -424,7 +424,7 @@ class engineBattleShip(ClientReseau):
         if squarePosition != (None,None):
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
-                    self.square_size = 38
+                    self.square_size = 34.5
                     self.drawing_turtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
@@ -441,7 +441,7 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.end_fill()        
                 else:
-                    self.square_size = 38
+                    self.square_size = 34.5
                     self.drawing_turtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
@@ -687,8 +687,8 @@ game = engineBattleShip(800,800)
 game.BgImage("image\Background.gif")
 
 #Grids
-game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+game.DrawGrid("Attack Grid",11,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+game.DrawGrid("Shot Grid",11,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
 #Boutons
 game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
