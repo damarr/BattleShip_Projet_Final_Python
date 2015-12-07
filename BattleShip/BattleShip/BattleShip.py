@@ -4,7 +4,7 @@
 
 # -*- coding: utf-8 -*-
 
-import json, socket, time, turtle, os, webbrowser, argparse
+import json, socket, time, turtle, os, webbrowser
 
 class Protestation(Exception):
     pass
@@ -161,7 +161,7 @@ class engineBattleShip(ClientReseau):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
         self.username=self.GetUserName()
-        self.client = ClientReseau(self.username) #remplacer par super??
+        self.client = ClientReseau(self.username)
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
         self.itemdictionary = {} #initialisation du dictionnaire
@@ -188,7 +188,6 @@ class engineBattleShip(ClientReseau):
         self.porte_avions=[]
         self.all_position=[]
         self.is_a_boat=False
-        print("Votre nom est : {} et votre adversaire est {}".format(self.username,self.client.adversaire()))
 
     def GetUserName(self): #a ameliorer un peu
         ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
@@ -328,8 +327,11 @@ class engineBattleShip(ClientReseau):
                     return((key,(posX,posY)))
         self.turtlekiller.clear()
 
+    '''
+    Retourne la position en X et en Y de la case cliquée par l'utilisateur
+    '''
+
     def GridDecomposer(self,name,clicPosition):
-        ''' Retourne la position en X et en Y de la case cliquée par l'utilisateur '''
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
@@ -627,8 +629,7 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=False
     
     def Damage(self, attack):
-        ''' Fonction qui envoit à l'adversaire le résultat de son attaque, 
-        basé sur la mémoire des positions de nos navires.'''
+    #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
         if attack is None:
             print('Your ennemy did not attack yet, wait your turn')
             time.sleep(2)
@@ -673,39 +674,40 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter("À l'eau!")
 
 
-#Main pour tester les fonctionnalités
-def Main():
-    game = engineBattleShip(800,800)
-    
-    #Image de fond
-    game.BgImage("image\Background.gif")
 
-    #Grids
-    game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-    game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
-    #Boutons
-    game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
-    game.Button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
-    game.Button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+        
+'''
+Main pour tester les fonctionnalitées
+'''
+game = engineBattleShip(800,800)
 
-    #Bateaux
-    game.Button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
-    game.Button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
-    game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
-    game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
-    game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
-    
-    #Main loops
-    while game.GetWhileValue():
-        game.ItemDetector(game.ClicManager())
-        game.display.onkeypress(game.BoatVertical,'Right')
-        game.display.onkeypress(game.BoatHorizontal,'Left')
-        game.display.listen()
-    print("You have now started the game")
-    while True:
-        game.WindowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
-        game.ItemDetector(game.ClicManager())
 
-if __name__ == "__main__":
-    Main()
+#Image de fond
+game.BgImage("image\Background.gif")
+
+#Grids
+game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+
+#Boutons
+game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
+game.Button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
+game.Button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+
+#Bateaux
+game.Button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
+game.Button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
+game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
+game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
+game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
+#Main loops
+while game.GetWhileValue():
+    game.ItemDetector(game.ClicManager())
+    game.display.onkeypress(game.BoatVertical,'Right')
+    game.display.onkeypress(game.BoatHorizontal,'Left')
+    game.display.listen()
+print("You have now started the game")
+while True:
+    game.WindowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
+    game.ItemDetector(game.ClicManager())
