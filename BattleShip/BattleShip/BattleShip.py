@@ -413,6 +413,8 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.end_fill()
                             self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
                             self.turn = False
+                        if key != "Shot Grid" and self.GetWhileValue() != True and self.turn:
+                            self.client.attaquer((0,0))
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
@@ -748,8 +750,8 @@ while game.GetWhileValue():
     game.display.listen()
 print("You have now started the game")
 while True:
-    pootis = game.attaquer(None)
-    if game.turn == True and game.firstTurn == True and game.attaquer(None) != None:
+    pootis = game.attaquer()
+    if game.turn == True and game.firstTurn == True and game.attaquer() != (0,0):
         game.firstTurn = False
         #game.damage(game.attaquer())
         print(game.attaquer(None))
