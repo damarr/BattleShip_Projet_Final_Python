@@ -156,7 +156,7 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         return reponse
 
 class engineBattleShip(ClientReseau):
-    ''' Description de la classe ici ''' 
+    "Class that contains the whole engine of the game"
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
@@ -189,13 +189,14 @@ class engineBattleShip(ClientReseau):
         self.porte_avions=[]
         self.all_position=[]
         self.is_a_boat=False
+        self.turn = True
 
     def GetUserName(self): 
-        ''' Function asking your username and send it to the BattleShip init'''
+        "Function asking your username and send it to the BattleShip init"
         return self.display.textinput("Your username", "Enter your username : ")
     
     def GetOtherName(self): #a ameliorer un peu
-        ''' Function asking your enemy username and send it to the BattleShip init, if nothing is written it will send None'''
+        "Function asking your enemy username and send it to the BattleShip init, if nothing is written it will send None"
         self.otherplayerstring=self.display.textinput("Your enemy", "Enter your enemy username, let blank for a random enemy : ")
         if self.otherplayerstring=='':
             return None
@@ -203,19 +204,18 @@ class engineBattleShip(ClientReseau):
             return self.otherplayerstring
 
     def Clear(self):
-        ''' Clear the display '''
+        "Clear the display"
         self.display.clear()
 
     def GetWhileValue(self):
         return self.whileValue
 
     def BgImage(self,path):
-        ''' Add a background to the display '''
+        "Add a background to the display"
         self.display.bgpic(os.path.abspath(path))
 
     def Button(self,name,path,posX,posY,lenght,height): #not 100% good yet
-        ''' Create buttons, using images in the game folder
-        Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image '''
+        "Create buttons, using images in the game folder. Needs: name of the object, image path , X and Y position, width and height of the image in pixels"
         imageTurtle = turtle.Turtle()
         imageTurtle.penup()
         self.display.addshape(os.path.abspath(path))
@@ -225,25 +225,32 @@ class engineBattleShip(ClientReseau):
         self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
 
     def StartButton(self):
-        ''' Permet de changer de partie du programme '''
+        "Changes the part of the game the player is in"
         self.whileValue = False
 
     def ExitButton(self):
-        ''' Quitte le programme '''
+        "Quits the program"
         self.display.bye()
 
     def InfoButton(self):
-        ''' Ouvre une page internet '''
+        "Opens an internet page"
         webbrowser.open("https://github.com/Damfurrywolf/BattleShip_Projet_Final_Python")
 
-    def WindowTitleNotification(self,text1,text2,timeToElapse):
-        ''' Envoie une notification à l'utilisateur en changeant le titre de la fenêtre '''
+    def WindowTitleNotification(self,timeToElapse,text1,text2,text3 = None):
+        "Sends a notification to the player by changing the name of the window"
         timeNow = time.time()
         if (timeNow - self.startTime) >= timeToElapse:
             if self.title == text1:
                 self.title = text2
                 self.display.title(text2)
             elif self.title == text2:
+                if text3 != None:
+                    self.title = text3
+                    self.display.title(text3)
+                else:
+                    self.title = text1
+                    self.display.title(text1)
+            elif self.title == text3:
                 self.title = text1
                 self.display.title(text1)
             else:
@@ -251,10 +258,25 @@ class engineBattleShip(ClientReseau):
                 self.display.title(text1)
             self.startTime = time.time()
 
+    def AttackPos(self,clicPosition):
+        "Fonction that returns the position clicked by the player that's attacking"
+        name = "Shot Grid"
+        key = name
+        temp = self.itemdictionary.get(key)[0]
+        temp2 = self.itemdictionary.get(key)[1]
+        tempPosition = self.itemdictionary.get(key)[3]
+        pixelPerSquare = temp[0]/temp2[0]
+        clicPosition2 = clicPosition
+        for w in range (temp2[0] + 1):
+            if clicPosition2[0] < ((w * pixelPerSquare) + tempPosition[0]):
+                break
+        for h in range (temp2[1] + 1):
+            if (clicPosition2[1] > (tempPosition[1] - (h * pixelPerSquare))):
+                break
+        return((w,h))
+
     def DrawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
-        ''' Fonction qui crée des grilles
-        Besoin: d'un nom pour la grille, le nombre de cases en largeur ou hauteur, l'espace désiré laissé sur les côtés,
-        une position en X et en Y, une couleur en style RGB our la couleur de la grille et une couleur en type RGB pour le remplisage '''
+        "Fonction that creates a grid. Requires : Name of the grid, numbre of squares in both width and height, gap space size for the sides, X and Y position, RBG color for the grid and one for the filling of the squares"
         pixelPerSquare = (windowWidth - 2*margin)/nbHeight
         compensation = windowWidth/2
         basicTurtle = turtle.Turtle()
@@ -299,22 +321,22 @@ class engineBattleShip(ClientReseau):
 
 
     def GetRawItemPosition(self,name):
-        ''' Retourne la position de l'item entré '''
-        return(self.itemdictionary.get(name)[3])
+       "Returns the position of the specified item"
+       return(self.itemdictionary.get(name)[3])
 
     def GetGridSquareSize(self,name):
-        ''' Permet d'obtenir le nombre de cases en largeur et en hauteur d'une grille entrée (Une valeur car même nombre de cases dans les deux sens). '''
+        "Returns the number of squares in width and height of the grid entered (Same number of squares both ways)"
         stuff = self.itemdictionary.get(name)[1]
         return(stuff[0])
     
 
     def GetItemSize(self,name):
-        ''' Permet d'obtenir la largeur et la hauteur dans un tuple d'un objet entré '''
+        "Returns the size of the specified item in a tuple"
         return(self.itemdictionary.get(name)[0])
 
 
     def ClicManager(self):
-        ''' Détecte les clics de l'utilisateur et retourne l'item cliqué ainsi que la position du clic. '''
+        "Detects the clicks of the user and returns the name of the object that the user clicked"
         self.turtlekiller.append(self.clicTurtle)
         victimTurtle = self.turtlekiller[0]
         victimTurtle._tracer(10,1000)
@@ -336,11 +358,8 @@ class engineBattleShip(ClientReseau):
                     return((key,(posX,posY)))
         self.turtlekiller.clear()
 
-    '''
-    Retourne la position en X et en Y de la case cliquée par l'utilisateur
-    '''
-
     def GridDecomposer(self,name,clicPosition):
+        "Returns the X and Y position of the square clicked by the user"
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
@@ -381,7 +400,7 @@ class engineBattleShip(ClientReseau):
                         self.squareSizeAtt = self.GetGridSquareSize("Attack Grid")
                         self.squareSizeShot = self.GetGridSquareSize("Shot Grid")
 
-                        if key == "Shot Grid" and self.GetWhileValue() != True:
+                        if key == "Shot Grid" and self.GetWhileValue() != True and self.turn:
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
@@ -391,7 +410,8 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
-
+                            self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
+                            self.turn = False
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
@@ -561,6 +581,7 @@ class engineBattleShip(ClientReseau):
                         self.croiseur.append((position[0]-2+i,position[1]-2))
                         self.all_position.append((position[0]-2+i,position[1]-2)) 
 
+
     def IsThereABoat(self, position):
         ''' Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. 
         Si un bateau se trouve sur l'une des cases prises par le navire que l'on cherche à placer, 
@@ -681,6 +702,7 @@ class engineBattleShip(ClientReseau):
                         self.client.rapporter('Vous avez gagné')
             else:
                 self.client.rapporter("À l'eau!")
+            self.turn = True
 
 
 
@@ -690,7 +712,6 @@ class engineBattleShip(ClientReseau):
 Main pour tester les fonctionnalitées
 '''
 game = engineBattleShip(800,800)
-
 
 #Image de fond
 game.BgImage("image\Background.gif")
@@ -711,12 +732,19 @@ game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
 game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
 game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
 #Main loops
+
 while game.GetWhileValue():
+    #Initial window title
+    game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
+   
     game.ItemDetector(game.ClicManager())
     game.display.onkeypress(game.BoatVertical,'Right')
     game.display.onkeypress(game.BoatHorizontal,'Left')
     game.display.listen()
 print("You have now started the game")
 while True:
-    game.WindowTitleNotification("-_-It's your turn-_-","_-_IT'S YOUR TURN_-_",0.5)
+    if game.turn == True:
+        game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+    else:
+        game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
     game.ItemDetector(game.ClicManager())
