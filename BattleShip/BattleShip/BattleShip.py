@@ -161,6 +161,7 @@ class engineBattleShip(ClientReseau):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
         self.username=self.GetUserName()
+        self.otherplayer=self.GetOtherName()
         self.client = ClientReseau(self.username)
         self.whileValue = True
         self.clicTurtle = turtle.Turtle()
@@ -189,23 +190,31 @@ class engineBattleShip(ClientReseau):
         self.all_position=[]
         self.is_a_boat=False
 
-    def GetUserName(self): #a ameliorer un peu
-        ''' Module demandant le pseudo de l'utilisateur et qui retourne le pseudo sous format str'''
-        return self.display.textinput("Votre pseudo", "Entrez votre nom de joueur : ")
+    def GetUserName(self): 
+        ''' Function asking your username and send it to the BattleShip init'''
+        return self.display.textinput("Your username", "Enter your username : ")
+    
+    def GetOtherName(self): #a ameliorer un peu
+        ''' Function asking your enemy username and send it to the BattleShip init, if nothing is written it will send None'''
+        self.otherplayerstring=self.display.textinput("Your enemy", "Enter your enemy username, let blank for a random enemy : ")
+        if self.otherplayerstring=='':
+            return None
+        else:
+            return self.otherplayerstring
 
     def Clear(self):
-        ''' Efface tout dans la fenêtre '''
+        ''' Clear the display '''
         self.display.clear()
 
     def GetWhileValue(self):
         return self.whileValue
 
     def BgImage(self,path):
-        ''' Change le fond d'écran de la fenêtre '''
+        ''' Add a background to the display '''
         self.display.bgpic(os.path.abspath(path))
 
     def Button(self,name,path,posX,posY,lenght,height): #not 100% good yet
-        ''' Crée des boutons qui prennent l'apparence d'images
+        ''' Create buttons, using images in the game folder
         Besoin: Nom de l'objet, "path" de l'image, position en X et en Y, largeur et hauteur de l'image '''
         imageTurtle = turtle.Turtle()
         imageTurtle.penup()
@@ -376,7 +385,7 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
-                            correction = 4
+                            correction = -1
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2 - correction)
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
@@ -424,7 +433,7 @@ class engineBattleShip(ClientReseau):
         if squarePosition != (None,None):
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
-                    self.square_size = 38
+                    self.square_size = 34.5
                     self.drawing_turtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
@@ -441,7 +450,7 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.end_fill()        
                 else:
-                    self.square_size = 38
+                    self.square_size = 34.5
                     self.drawing_turtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
@@ -687,8 +696,8 @@ game = engineBattleShip(800,800)
 game.BgImage("image\Background.gif")
 
 #Grids
-game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+game.DrawGrid("Attack Grid",11,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+game.DrawGrid("Shot Grid",11,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
 #Boutons
 game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
