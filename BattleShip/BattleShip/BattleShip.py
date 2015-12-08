@@ -186,11 +186,9 @@ class engineBattleShip(ClientReseau):
         self.contre_torpilleur=[]
         self.sous_marin=[]
         self.croiseur=[]
-        self.firstTurn = True
         self.porte_avions=[]
         self.all_position=[]
         self.is_a_boat=False
-        self.turn = True
         self.secondTime = 0
 
     def GetUserName(self): 
@@ -765,26 +763,13 @@ print("You have now started the game")
 print("You are playing against : " + str(game.client.adversaire()))
 while True:
     #Actual gameplay
-    if game.turn == False or game.firstTurn == True:
-        tempClient = game.client.attaquer(None)
-    else:
-        tempClient = None
-    if game.turn == True and game.firstTurn == True:
-            if tempClient != None:
-                game.firstTurn = False
-            game.Damage(tempClient)
-            print(tempClient)
-            game.report()
-    elif game.turn == False:
-            game.Damage(tempClient)
-            print(tempClient)
-            game.report()
+    tempClient = game.client.attaquer(None)
     
-           
+               
     #Text in window title
-    if game.turn == True:
-        game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-    else:
-        game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+    #if game.turn == True:
+     #   game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+    #else:
+     #   game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
         
     game.ItemDetector(game.ClicManager())
