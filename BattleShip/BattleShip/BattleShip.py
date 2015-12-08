@@ -448,6 +448,15 @@ class engineBattleShip(ClientReseau):
             self.display.onkeypress(self.BoatHorizontal,'Left')
             print(self.orientation)
 
+    def WriteText(self):
+        self.drawing_turtle.penup()
+        self.drawing_turtle.hideturtle()
+        self.drawing_turtle.goto(-220,300)
+        self.drawing_turtle.color("white")
+        self.drawing_turtle.write("Before starting the game, please place your boats by clicking them on the left\nand place them on the lower grid and then you can press start !\nJust attack on the upper grid and wait for your opponent's turn to end until attacking again.", align="left", font=("Arial", 10, "normal"), move=False)
+        self.drawing_turtle.goto(-200,20)
+        self.drawing_turtle.write("""0""", align="left", font=("Arial", 11, "normal"), move=False)
+
     def BoatButton(self,position):
         ''' Fonction qui permet au click suivant le click sur une icone bateau de placer le bateau dans la grille '''
         squarePosition=self.GetClickedSquare()
