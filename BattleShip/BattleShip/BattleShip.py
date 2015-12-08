@@ -363,9 +363,12 @@ class engineBattleShip(ClientReseau):
                     return((key,(posX,posY)))
         self.turtlekiller.clear()
 
-    def GridDecomposer(self,name,clicPosition):
-        """Returns the X and Y position of the square clicked by the user
-        :returns: (positionX,positionY) where positionX and positionY are between 0 and 9"""
+    def GridDecomposer(self,name,clicPosition): #c'est quoi le parametre name??
+        """Returns the raw X and Y position of the top left square corner clicked by the user
+        :param: name is the name of the grid
+        :param: clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
+        :returns: (positionX,positionY) where positionX and positionY 
+                                   are raw X and Y position of the top left square corner"""
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
@@ -386,7 +389,8 @@ class engineBattleShip(ClientReseau):
         return (positionX,positionY)
 
     def GetClickedSquare(self):
-        ''' Retourne la case cliquée en case et non en pixel '''
+        ''' Get case number from the grid 
+        :returns: (caseX, caseY) a tuple which identifies the case between 0 and 9 '''
         if self.caseX != None and self.caseY != None:
             transitionX = self.caseX
             transitionY = self.caseY
@@ -394,11 +398,11 @@ class engineBattleShip(ClientReseau):
             self.caseY = None
             return ((transitionX-1,transitionY-1))
     
-    def ItemDetector(self,clicPosition,attaqueenvoyee=None): #attaqueenvoyee prend attaque_envoyee de ClientReseau
+    def ItemDetector(self,clicPosition,attaqueEnvoyee=None): #attaqueEnvoyee prend attaque_envoyee de ClientReseau
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
-        print(clicPosition[1]) # a supprimer
+        print(clicPosition[1])
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
@@ -407,11 +411,7 @@ class engineBattleShip(ClientReseau):
                         self.GridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
                         self.squareSizeAtt = self.GetGridSquareSize("Down Grid")
                         self.squareSizeShot = self.GetGridSquareSize("Up Grid")
-
-
-                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueenvoyee != True: #coloriage de la case attaquée sur la grille d'en haut
-                            
-                            
+                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueEnvoyee != True: #coloriage de la case attaquée sur la grille d'en haut
                             self.attackTurtle.goto(self.GridDecomposer("Up Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
@@ -741,13 +741,8 @@ def Main():
     try:
         args = parser.parse_args()
         game = engineBattleShip(800,800, args.playername, args.othername)
-
     except:
         game = engineBattleShip(800,800)
-        
-    '''
-    Main pour tester les fonctionnalitées
-    '''
 
     #Image de fond
     game.BgImage("image\Background.gif")
@@ -767,6 +762,7 @@ def Main():
     game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
     game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
     game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
+    
     #Main loops
 
     startTimeResponse = time.time()
