@@ -191,6 +191,7 @@ class engineBattleShip(ClientReseau):
         self.all_position=[]
         self.is_a_boat=False
         self.turn = True
+        self.secondTime = 0
 
     def GetUserName(self): 
         "Function asking your username and send it to the BattleShip init"
@@ -661,13 +662,12 @@ class engineBattleShip(ClientReseau):
     
     def Damage(self, attack):
     #Fonction qui envoit à l'adversaire le résultat de son attaque, basé sur la mémoire des positions de nos navires.
-        if attack == None and self.whileValue == False:
-            print('Your ennemy did not attack yet, wait your turn')
-            time.sleep(2)
-            self.Damage(attack)
-        elif attack == None and self.whileValue == True:
-            print('Your ennemy is still placing his boats, please wait')
-            time.sleep(2)
+        timeNow2 = time.time()
+        if attack == None:
+            if (timeNow2 - self.secondTime) >= 2:
+                print('Your ennemy did not attack yet, wait your turn')
+                self.secondTime = time.time()
+                self.Damage(attack)
         else:
             if attack in self.torpilleur:
                 self.torpilleur.remove(attack)
@@ -707,6 +707,8 @@ class engineBattleShip(ClientReseau):
             else:
                 self.client.rapporter("À l'eau!")
             self.turn = True
+
+
     def report(self):
         if self.client.rapporter()==None:
             pass
@@ -753,16 +755,16 @@ print("You have now started the game")
 print("You are playing against : " + str(game.client.adversaire()))
 while True:
     #Actual gameplay
-    tempClient = game.client.attaquer(None)
+    if game.turn == False or game.firstTurn == True:
+        tempClient = game.client.attaquer(None)
+    else:
+        tempClient = None
     if game.turn == True and game.firstTurn == True:
-        if tempClient != None:
-            print("Hey")
-            game.firstTurn = False
+            if tempClient != None:
+                game.firstTurn = False
             game.Damage(tempClient)
             game.report()
     elif game.turn == False:
-        if tempClient != None:
-            print("oh")
             game.Damage(tempClient)
             game.report()
     
