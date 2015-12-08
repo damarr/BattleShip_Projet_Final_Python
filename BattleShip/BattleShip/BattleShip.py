@@ -781,14 +781,14 @@ def Main():
                 if tempClient != None:
                     break
                 startTimeResponse = time.time()
-        game.Damage(tempClient)
+        #game.Damage(tempClient)
 
         #Text in window title
-        if ClientReseau.attack_sent()==False:
-            game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        elif ClientReseau.attack_sent()==True:
-            game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-        game.ItemDetector(game.ClicManager())
+        #if game.client.attack_sent()==False:
+        #    game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+        #elif game.client.attack_sent()==True:
+        #    game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+        #game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
     Main()
