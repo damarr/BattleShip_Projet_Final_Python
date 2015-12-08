@@ -4,7 +4,7 @@
 
 # -*- coding: utf-8 -*-
 
-import json, socket, time, turtle, os, webbrowser
+import json, socket, time, turtle, os, webbrowser, argparse, sys
 
 class Protestation(Exception):
     pass
@@ -156,6 +156,7 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         return reponse
 
     def attack_sent(self):
+        ":returns: True or False if attack already sent to other player"
         return self.attaque_envoyee
 
 class engineBattleShip(ClientReseau):
@@ -397,6 +398,7 @@ class engineBattleShip(ClientReseau):
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
+        print(clicPosition[1]) # a supprimer
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
@@ -732,6 +734,11 @@ class engineBattleShip(ClientReseau):
 
 
 def Main():
+    #parser = argparse.ArgumentParser(prog="BattleShip : The Space Battle")
+    #parser.add_argument('playername', help='First Player', default="player one")
+    #parser.add_argument('othername', help='First Player', default=None)
+
+    #args = parser.parse_args()
         
     '''
     Main pour tester les fonctionnalitées
@@ -781,11 +788,12 @@ def Main():
                     break
                 startTimeResponse = time.time()
         print(tempClient)
+
         #Text in window title
-        #if game.turn == True:
-         #   game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        #else:
-         #   game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+        if ClientReseau.attack_sent()==False:
+            game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+        elif ClientReseau.attack_sent()==True:
+            game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
         game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
