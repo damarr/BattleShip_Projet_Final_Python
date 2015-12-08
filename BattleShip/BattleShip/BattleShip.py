@@ -411,6 +411,7 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
                             self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
+                            print(self.AttackPos(self.attackTurtle.pos()))
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
@@ -721,60 +722,63 @@ class engineBattleShip(ClientReseau):
             print(self.client.rapporter())
 
 
-
+def Main():
         
-'''
-Main pour tester les fonctionnalitées
-'''
-game = engineBattleShip(800,800)
+    '''
+    Main pour tester les fonctionnalitées
+    '''
+    game = engineBattleShip(800,800)
 
-#Image de fond
-game.BgImage("image\Background.gif")
+    #Image de fond
+    game.BgImage("image\Background.gif")
 
-#Grids
-game.DrawGrid("Attack Grid",11,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-game.DrawGrid("Shot Grid",11,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+    #Grids
+    game.DrawGrid("Attack Grid",11,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+    game.DrawGrid("Shot Grid",11,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
-#Boutons
-game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
-game.Button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
-game.Button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+    #Boutons
+    game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
+    game.Button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
+    game.Button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
 
-#Bateaux
-game.Button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
-game.Button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
-game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
-game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
-game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
-#Main loops
+    #Bateaux
+    game.Button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
+    game.Button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
+    game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
+    game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
+    game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
+    #Main loops
 
-startTimeResponse = time.time()
+    startTimeResponse = time.time()
 
-while game.GetWhileValue():
-    #Initial window title
-    game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
+    while game.GetWhileValue():
+        #Initial window title
+        game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
    
-    game.ItemDetector(game.ClicManager())
-    game.display.onkeypress(game.BoatVertical,'Right')
-    game.display.onkeypress(game.BoatHorizontal,'Left')
-    game.display.listen()
-print("You have now started the game")
-print("You are playing against : " + str(game.client.adversaire()))
-while True:
-    #Actual gameplay
-    tempClient = None
-    while tempClient == None:
         game.ItemDetector(game.ClicManager())
-        timeNow3 = time.time()
-        if (timeNow3 - startTimeResponse) >= 0.1:
-            tempClient = game.client.attaquer()
-            if tempClient != None:
-                break
-            startTimeResponse = time.time()
-    print(tempClient)
-    #Text in window title
-    #if game.turn == True:
-     #   game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-    #else:
-     #   game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-    game.ItemDetector(game.ClicManager())
+        game.display.onkeypress(game.BoatVertical,'Right')
+        game.display.onkeypress(game.BoatHorizontal,'Left')
+        game.display.listen()
+    print("You have now started the game")
+    print("You are playing against : " + str(game.client.adversaire()))
+    while True:
+        #Actual gameplay
+        tempClient = None
+        while tempClient == None:
+            game.ItemDetector(game.ClicManager())
+            timeNow3 = time.time()
+            if (timeNow3 - startTimeResponse) >= 0.1:
+                tempClient = game.client.attaquer()
+                if tempClient != None:
+                    break
+                startTimeResponse = time.time()
+        print(tempClient)
+        #Text in window title
+        #if game.turn == True:
+         #   game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+        #else:
+         #   game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+        game.ItemDetector(game.ClicManager())
+
+if __name__ == "__main__":
+    Main()
