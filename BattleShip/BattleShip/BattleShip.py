@@ -400,7 +400,7 @@ class engineBattleShip(ClientReseau):
                         self.squareSizeAtt = self.GetGridSquareSize("Attack Grid")
                         self.squareSizeShot = self.GetGridSquareSize("Shot Grid")
 
-                        if key == "Shot Grid" and self.GetWhileValue() != True and self.turn:
+                        if key == "Shot Grid" and self.GetWhileValue() != True:
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
@@ -411,7 +411,6 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
                             self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
-                            self.turn = False
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
@@ -672,8 +671,7 @@ class engineBattleShip(ClientReseau):
         timeNow2 = time.time()
         if attack == None:
             if (timeNow2 - self.secondTime) >= 2:
-                if self.turn == False: 
-                    print('Your ennemy did not attack yet, wait your turn')
+                print('Your ennemy did not attack yet, wait your turn')
                 self.secondTime = time.time()
                 self.Damage(attack)
         else:
@@ -714,7 +712,6 @@ class engineBattleShip(ClientReseau):
                         self.client.rapporter('Vous avez gagné')
             else:
                 self.client.rapporter("À l'eau!")
-            self.turn = True
 
 
     def report(self):
@@ -751,6 +748,8 @@ game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
 game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
 #Main loops
 
+startTimeResponse = time.time()
+
 while game.GetWhileValue():
     #Initial window title
     game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
@@ -763,13 +762,19 @@ print("You have now started the game")
 print("You are playing against : " + str(game.client.adversaire()))
 while True:
     #Actual gameplay
-    tempClient = game.client.attaquer(None)
-    
-               
+    tempClient = None
+    while tempClient == None:
+        game.ItemDetector(game.ClicManager())
+        timeNow3 = time.time()
+        if (timeNow3 - startTimeResponse) >= 0.1:
+            tempClient = game.client.attaquer()
+            if tempClient != None:
+                break
+            startTimeResponse = time.time()
+    print(tempClient)
     #Text in window title
     #if game.turn == True:
      #   game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
     #else:
      #   game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-        
     game.ItemDetector(game.ClicManager())
