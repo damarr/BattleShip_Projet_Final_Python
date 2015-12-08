@@ -402,7 +402,7 @@ class engineBattleShip(ClientReseau):
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
-        print(clicPosition[1])
+        print(clicPosition)
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
