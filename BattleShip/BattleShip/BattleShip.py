@@ -155,6 +155,9 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         self.socket.setblocking(1)
         return reponse
 
+    def attack_sent(self):
+        return self.attaque_envoyee
+
 class engineBattleShip(ClientReseau):
     "Class that contains the whole engine of the game"
     def __init__(self,sizeWidth,sizeHeight):
@@ -390,7 +393,7 @@ class engineBattleShip(ClientReseau):
             self.caseY = None
             return ((transitionX-1,transitionY-1))
     
-    def ItemDetector(self,clicPosition):
+    def ItemDetector(self,clicPosition,attaqueenvoyee=None): #attaqueenvoyee prend attaque_envoyee de ClientReseau
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
@@ -403,7 +406,10 @@ class engineBattleShip(ClientReseau):
                         self.squareSizeAtt = self.GetGridSquareSize("Down Grid")
                         self.squareSizeShot = self.GetGridSquareSize("Up Grid")
 
-                        if key == "Up Grid" and self.GetWhileValue() != True:
+
+                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueenvoyee != True: #coloriage de la case attaquée sur la grille d'en haut
+                            
+                            
                             self.attackTurtle.goto(self.GridDecomposer("Up Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
@@ -417,9 +423,9 @@ class engineBattleShip(ClientReseau):
                             tempPosY = self.AttackPos(self.attackTurtle.pos())[1] - 1
                             self.client.attaquer((tempPosX,tempPosY))
                             print((tempPosX,tempPosY))
-                        if self.boatClic != (None,None):
-                            if key != "Up Grid" and self.GetWhileValue() == True:
-                                
+
+                        if self.boatClic != (None,None): #si on a selectionne un bateau alors on peut le placer dans la grille du bas
+                            if key != "Up Grid" and self.GetWhileValue() == True: #si on est pas sur la grille du haut et on est dans la loop avant Start
                                 self.BoatButton(self.GridDecomposer(key,clicPosition))
                                 self.boatClic = (None,None)
             
@@ -440,7 +446,7 @@ class engineBattleShip(ClientReseau):
             self.display.onkeypress(None,'Right')
             self.orientation=True
             self.display.onkeypress(self.BoatVertical,'Right')
-            print(self.orientation)
+            print("The boat is vertical")
 
     def BoatHorizontal(self):
         ''' Permet de placer les bateaux à l'horizontale avec la flèche de gauche '''
@@ -448,7 +454,7 @@ class engineBattleShip(ClientReseau):
             self.display.onkeypress(None,'Left')
             self.orientation=False
             self.display.onkeypress(self.BoatHorizontal,'Left')
-            print(self.orientation)
+            print("The boat is horizontal")
 
     def WriteText(self):
         self.drawing_turtle.penup()
@@ -483,7 +489,7 @@ class engineBattleShip(ClientReseau):
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.end_fill()        
                 else:
-                    self.square_size = 34.5
+                    self.square_size = 38
                     self.drawing_turtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
@@ -657,7 +663,6 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-
         if self.boatClic==(3,"porte-avions"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
@@ -754,7 +759,6 @@ def Main():
     #Main loops
 
     startTimeResponse = time.time()
-
     while game.GetWhileValue():
         #Initial window title
         game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
@@ -769,7 +773,7 @@ def Main():
         #Actual gameplay
         tempClient = None
         while tempClient == None:
-            game.ItemDetector(game.ClicManager())
+            game.ItemDetector(game.ClicManager(),game.client.attack_sent())
             timeNow3 = time.time()
             if (timeNow3 - startTimeResponse) >= 0.1:
                 tempClient = game.client.attaquer()
