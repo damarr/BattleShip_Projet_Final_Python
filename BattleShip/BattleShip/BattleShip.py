@@ -404,20 +404,19 @@ class engineBattleShip(ClientReseau):
                             self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
-                            correction = 4
+                            correction = -1
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2 - correction)
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
                             self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
                             self.attackTurtle.end_fill()
-                            tempPosX = self.AttackPos(self.attackTurtle.pos())[0] - 1
-                            tempPosY = self.AttackPos(self.attackTurtle.pos())[1] - 1
-                            self.client.attaquer((tempPosX,tempPosY))
-                            print((tempPosX,tempPosY))
+                            self.client.attaquer(self.AttackPos(self.attackTurtle.pos()))
+                            print(self.AttackPos(self.attackTurtle.pos()))
                         if self.boatClic != (None,None):
                             if key != "Shot Grid" and self.GetWhileValue() == True:
                                 
                                 self.BoatButton(self.GridDecomposer(key,clicPosition))
+                                print("This should work" + str(self.boatClic[0]))
                                 self.boatClic = (None,None)
             
                     elif (shortcut[1] == (0,0)):
@@ -463,7 +462,7 @@ class engineBattleShip(ClientReseau):
         if squarePosition != (None,None):
             for i in range (self.boatClic[0]):
                 if self.orientation==True:
-                    self.square_size = 38
+                    self.square_size = 34.5
                     self.drawing_turtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
@@ -734,8 +733,8 @@ def Main():
     game.BgImage("image\Background.gif")
 
     #Grids
-    game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-    game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+    game.DrawGrid("Attack Grid",11,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+    game.DrawGrid("Shot Grid",11,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
     #Boutons
     game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
