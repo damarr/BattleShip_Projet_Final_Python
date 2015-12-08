@@ -402,7 +402,6 @@ class engineBattleShip(ClientReseau):
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
-        print(clicPosition)
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
@@ -765,7 +764,6 @@ def Main():
     while game.GetWhileValue():
         #Initial window title
         game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
-   
         game.ItemDetector(game.ClicManager())
         game.display.onkeypress(game.BoatVertical,'Right')
         game.display.onkeypress(game.BoatHorizontal,'Left')
@@ -784,7 +782,6 @@ def Main():
                     break
                 startTimeResponse = time.time()
         game.Damage(tempClient)
-        print(tempClient)
 
         #Text in window title
         if ClientReseau.attack_sent()==False:
