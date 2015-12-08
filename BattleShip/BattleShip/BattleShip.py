@@ -423,7 +423,6 @@ class engineBattleShip(ClientReseau):
                             tempPosX = self.AttackPos(self.attackTurtle.pos())[0] - 1
                             tempPosY = self.AttackPos(self.attackTurtle.pos())[1] - 1
                             self.client.attaquer((tempPosX,tempPosY))
-                            print((tempPosX,tempPosY))
 
                         if self.boatClic != (None,None): #si on a selectionne un bateau alors on peut le placer dans la grille du bas
                             if key != "Up Grid" and self.GetWhileValue() == True: #si on est pas sur la grille du haut et on est dans la loop avant Start
