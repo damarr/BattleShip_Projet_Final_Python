@@ -734,16 +734,20 @@ class engineBattleShip(ClientReseau):
 
 
 def Main():
-    #parser = argparse.ArgumentParser(prog="BattleShip : The Space Battle")
-    #parser.add_argument('playername', help='First Player', default="player one")
-    #parser.add_argument('othername', help='First Player', default=None)
+    parser = argparse.ArgumentParser(prog="BattleShip : The Space Battle")
+    parser.add_argument('playername', help='First Player', default="player one")
+    parser.add_argument('othername', help='First Player', default=None)
 
-    #args = parser.parse_args()
+    try:
+        args = parser.parse_args()
+        game = engineBattleShip(800,800, args.playername, args.othername)
+
+    except:
+        game = engineBattleShip(800,800)
         
     '''
     Main pour tester les fonctionnalitées
     '''
-    game = engineBattleShip(800,800)
 
     #Image de fond
     game.BgImage("image\Background.gif")
