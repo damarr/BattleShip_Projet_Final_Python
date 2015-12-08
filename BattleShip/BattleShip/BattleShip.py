@@ -665,7 +665,8 @@ class engineBattleShip(ClientReseau):
         timeNow2 = time.time()
         if attack == None:
             if (timeNow2 - self.secondTime) >= 2:
-                print('Your ennemy did not attack yet, wait your turn')
+                if self.turn == False: 
+                    print('Your ennemy did not attack yet, wait your turn')
                 self.secondTime = time.time()
                 self.Damage(attack)
         else:
@@ -763,9 +764,11 @@ while True:
             if tempClient != None:
                 game.firstTurn = False
             game.Damage(tempClient)
+            print(tempClient)
             game.report()
     elif game.turn == False:
             game.Damage(tempClient)
+            print(tempClient)
             game.report()
     
            
