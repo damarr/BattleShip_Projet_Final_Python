@@ -716,9 +716,9 @@ class engineBattleShip(ClientReseau):
                 #    self.client.rapporter('Vous avez gagné')
         else:
             self.client.rapporter("À l'eau!")
+        
         if self.all_position==[]:
             self.client.rapporter("You Win")
-
 
     def report(self):
         if self.client.rapporter()==None:
@@ -780,7 +780,7 @@ def Main():
                 if tempClient != None:
                     break
                 startTimeResponse = time.time()
-        #game.Damage(tempClient)
+        game.Damage(tempClient) #envoie un tuple (x,y) a Damage
 
         #text in window title
         if game.client.attack_sent()==False:
