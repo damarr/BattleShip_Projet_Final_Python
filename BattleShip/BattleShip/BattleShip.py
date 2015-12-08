@@ -260,7 +260,7 @@ class engineBattleShip(ClientReseau):
 
     def AttackPos(self,clicPosition):
         "Fonction that returns the position clicked by the player that's attacking"
-        name = "Shot Grid"
+        name = "Up Grid"
         key = name
         temp = self.itemdictionary.get(key)[0]
         temp2 = self.itemdictionary.get(key)[1]
@@ -336,7 +336,8 @@ class engineBattleShip(ClientReseau):
 
 
     def ClicManager(self):
-        "Detects the clicks of the user and returns the name of the object that the user clicked"
+        """Detects the clicks of the user and returns the name of the object that the user clicked
+        :returns: (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates"""
         self.turtlekiller.append(self.clicTurtle)
         victimTurtle = self.turtlekiller[0]
         victimTurtle._tracer(10,1000)
@@ -359,7 +360,8 @@ class engineBattleShip(ClientReseau):
         self.turtlekiller.clear()
 
     def GridDecomposer(self,name,clicPosition):
-        "Returns the X and Y position of the square clicked by the user"
+        """Returns the X and Y position of the square clicked by the user
+        :returns: (positionX,positionY) where positionX and positionY are between 0 and 9"""
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
@@ -377,8 +379,7 @@ class engineBattleShip(ClientReseau):
                         break
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
-        positionFinal = (positionX,positionY)
-        return (positionFinal)
+        return (positionX,positionY)
 
     def GetClickedSquare(self):
         ''' Retourne la case cliquée en case et non en pixel '''
@@ -390,18 +391,20 @@ class engineBattleShip(ClientReseau):
             return ((transitionX-1,transitionY-1))
     
     def ItemDetector(self,clicPosition):
-        ''' Permet de gérer n'importe quel item ajouté dans le dictionaire d'items '''
+        '''Treats items which are in itemdictionnary
+        :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
+        :returns: nothing'''
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
                     shortcut = self.itemdictionary.get(key)
                     if (shortcut[1] != (0,0)):
                         self.GridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
-                        self.squareSizeAtt = self.GetGridSquareSize("Attack Grid")
-                        self.squareSizeShot = self.GetGridSquareSize("Shot Grid")
+                        self.squareSizeAtt = self.GetGridSquareSize("Down Grid")
+                        self.squareSizeShot = self.GetGridSquareSize("Up Grid")
 
-                        if key == "Shot Grid" and self.GetWhileValue() != True:
-                            self.attackTurtle.goto(self.GridDecomposer("Shot Grid",clicPosition))
+                        if key == "Up Grid" and self.GetWhileValue() != True:
+                            self.attackTurtle.goto(self.GridDecomposer("Up Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
                             self.attackTurtle.begin_fill()
                             correction = 4
@@ -415,7 +418,7 @@ class engineBattleShip(ClientReseau):
                             self.client.attaquer((tempPosX,tempPosY))
                             print((tempPosX,tempPosY))
                         if self.boatClic != (None,None):
-                            if key != "Shot Grid" and self.GetWhileValue() == True:
+                            if key != "Up Grid" and self.GetWhileValue() == True:
                                 
                                 self.BoatButton(self.GridDecomposer(key,clicPosition))
                                 self.boatClic = (None,None)
@@ -734,8 +737,8 @@ def Main():
     game.BgImage("image\Background.gif")
 
     #Grids
-    game.DrawGrid("Attack Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-    game.DrawGrid("Shot Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+    game.DrawGrid("Down Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
+    game.DrawGrid("Up Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
 
     #Boutons
     game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
