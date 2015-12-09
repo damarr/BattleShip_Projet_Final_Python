@@ -681,43 +681,43 @@ class engineBattleShip(ClientReseau):
     def Damage(self, attack):
         ''' Function that treats the attack results and sends them to the other player
         :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
-        if attack in self.torpilleur:
+        if attack in self.torpilleur: #-------torpilleur
             self.torpilleur.remove(attack)
             self.all_position.remove(attack)
-            if self.torpilleur == []:
+            if self.torpilleur == [] and self.all_position!=[]:
                 self.client.rapporter('coulé')
             elif self.torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
-        elif attack in self.contre_torpilleur:
+        elif attack in self.contre_torpilleur: #-------contre torpilleur
             self.contre_torpilleur.remove(attack)
             self.all_position.remove(attack)
-            if self.contre_torpilleur == []:
+            if self.contre_torpilleur == [] and self.all_position!=[]:
                 self.client.rapporter('coulé')
             elif self.contre_torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
-        elif attack in self.croiseur:
+        elif attack in self.croiseur: #-------croiseur
             self.croiseur.remove(attack)
             self.all_position.remove(attack)
-            if self.croiseur == []:
+            if self.croiseur == [] and self.all_position!=[]:
                 self.client.rapporter('coulé')
             elif self.croiseur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
-        elif attack in self.porte_avions:
+        elif attack in self.porte_avions: #-------porte avions
             self.porte_avions.remove(attack)
             self.all_position.remove(attack)
-            if self.porte_avions == []:
+            if self.porte_avions == [] and self.all_position!=[]:
                 self.client.rapporter('coulé')
             elif self.porte_avions ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
-        elif attack in self.sous_marin:
+        elif attack in self.sous_marin: #-------sous marin
             self.sous_marin.remove(attack)
             self.all_position.remove(attack)
             if self.sous_marin == [] and self.all_position!=[]:
@@ -728,6 +728,13 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('touché')
         else:
             self.client.rapporter("A l'eau")
+        print("self.sous_marin",self.sous_marin,"    self.porte_avions",self.porte_avions,"     self.croiseur", self.croiseur,"      self.contre_torpilleur", self.contre_torpilleur,"      self.torpilleur", self.torpilleur)
+        print("self.all_position", self.all_position)
+
+    def IWon():
+        print("J'AI GAGNÉÉÉÉ")
+    def ILost():
+        print("J'AI PERDUUU")
 
 
 def Main():
@@ -795,6 +802,8 @@ def Main():
                 startTimeResponse = time.time()
                 if rapporter != None:
                     print(rapporter)
+                    if rapporter == "Win": #ne pas oublier de changer la phrase
+                        game.IWon()
                     break
         
 
