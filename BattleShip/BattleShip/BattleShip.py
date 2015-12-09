@@ -691,8 +691,6 @@ class engineBattleShip(ClientReseau):
             self.all_position.remove(attack)
             if self.torpilleur == []:
                 self.client.rapporter('coulé')
-            elif self.torpilleur ==[] and self.all_position==[]:
-                self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
         elif attack in self.contre_torpilleur:
@@ -701,8 +699,6 @@ class engineBattleShip(ClientReseau):
             self.all_position.remove(attack)
             if self.contre_torpilleur == []:
                 self.client.rapporter('coulé')
-            elif self.contre_torpilleur ==[] and self.all_position==[]:
-                self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
         elif attack in self.croiseur:
@@ -710,8 +706,6 @@ class engineBattleShip(ClientReseau):
             self.all_position.remove(attack)
             if self.croiseur == []:
                 self.client.rapporter('coulé')
-            elif self.croiseur ==[] and self.all_position==[]:
-                self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
         elif attack in self.porte_avions:
@@ -720,21 +714,22 @@ class engineBattleShip(ClientReseau):
             self.all_position.remove(attack)
             if self.porte_avions == []:
                 self.client.rapporter('coulé')
-            elif self.porte_avions ==[] and self.all_position==[]:
-                self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
         elif attack in self.sous_marin:
             self.sous_marin.remove(attack)
             self.all_position.remove(attack)
-            if self.sous_marin == [] and self.all_position!=[]:
+            if self.sous_marin == []:
                 self.client.rapporter('coulé')
-            elif self.sous_marin ==[] and self.all_position==[]:
-                self.client.rapporter('Win')
             else:
                 self.client.rapporter('touché')
         else:
             self.client.rapporter("à l'eau")
+        if self.all_position==[]:
+            self.GameWin()
+
+    def GameWin():
+        print("Vous avez gagné la partie!")
 
 
 def Main():
@@ -804,13 +799,12 @@ def Main():
                     print(rapporter)
                     break
         
-
-        ##text in window title
-        #if game.client.attack_sent()==False:
-        #    game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        #elif game.client.attack_sent()==True or game.client.report_sent()==True :
-        #    game.WindowTitleNotification(1,"Please wait.","Please wait..","Please wait...")
-        #game.ItemDetector(game.ClicManager())
+        #text in window title
+        if game.client.attack_sent()==False:
+            game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+        elif game.client.attack_sent()==True or game.client.report_sent()==True :
+            game.WindowTitleNotification(1,"Please wait.","Please wait..","Please wait...")
+        game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
     Main()
