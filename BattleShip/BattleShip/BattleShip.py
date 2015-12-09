@@ -185,6 +185,7 @@ class engineBattleShip(ClientReseau):
         self.orientation=True
         self.drawing_turtle=turtle.Turtle()
         self.drawing_turtle.fillcolor("gray")
+        self.drawing_turtle.ht()
         self.attackTurtle = turtle.Turtle()
         self.attackTurtle.hideturtle()
         self.attackTurtle.penup()
@@ -242,8 +243,7 @@ class engineBattleShip(ClientReseau):
         self.display.bye()
 
     def InfoButton(self):
-        "Opens an internet page"
-        webbrowser.open("https://github.com/Damfurrywolf/BattleShip_Projet_Final_Python")
+        self.client.protester(self.display.textinput("Protest", "Complain : "))
 
     def WindowTitleNotification(self,timeToElapse,text1,text2,text3 = None):
         """Sends a notification to the player by changing the name of the window
@@ -437,7 +437,10 @@ class engineBattleShip(ClientReseau):
                                 self.boatClic = (None,None)
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
-                            self.StartButton()
+                            if len(self.all_position)!=17:
+                                print('You still have some inactives ships')
+                            else:
+                                self.StartButton()
                         elif key == "exit":
                             self.ExitButton()
                         elif key == "infos":
@@ -462,14 +465,6 @@ class engineBattleShip(ClientReseau):
             self.display.onkeypress(self.BoatHorizontal,'Left')
             print("The boat is horizontal")
 
-    def WriteText(self):
-        self.drawing_turtle.penup()
-        self.drawing_turtle.hideturtle()
-        self.drawing_turtle.goto(-220,300)
-        self.drawing_turtle.color("white")
-        self.drawing_turtle.write("Before starting the game, please place your boats by clicking them on the left\nand place them on the lower grid and then you can press start !\nJust attack on the upper grid and wait for your opponent's turn to end until attacking again.", align="left", font=("Arial", 10, "normal"), move=False)
-        self.drawing_turtle.goto(-200,20)
-        self.drawing_turtle.write("""0""", align="left", font=("Arial", 11, "normal"), move=False)
 
     def BoatButton(self,position):
         ''' Fonction qui permet au click suivant le click sur une icone bateau de placer le bateau dans la grille '''
@@ -696,7 +691,6 @@ class engineBattleShip(ClientReseau):
             else:
                 self.client.rapporter('touché')
         elif attack in self.contre_torpilleur:
-            self.client.rapporter('touché')
             self.contre_torpilleur.remove(attack)
             self.all_position.remove(attack)
             if self.contre_torpilleur == []:
@@ -715,7 +709,6 @@ class engineBattleShip(ClientReseau):
             else:
                 self.client.rapporter('touché')
         elif attack in self.porte_avions:
-            self.client.rapporter('touché')
             self.porte_avions.remove(attack)
             self.all_position.remove(attack)
             if self.porte_avions == []:
@@ -734,7 +727,7 @@ class engineBattleShip(ClientReseau):
             else:
                 self.client.rapporter('touché')
         else:
-            self.client.rapporter("à l'eau")
+            self.client.rapporter("A l'eau")
 
 
 def Main():
