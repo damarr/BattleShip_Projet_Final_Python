@@ -228,9 +228,9 @@ class engineBattleShip(ClientReseau):
         "Create buttons, using images in the game folder. Needs: name of the object, image path , X and Y position, width and height of the image in pixels"
         imageTurtle = turtle.Turtle()
         imageTurtle.penup()
+        imageTurtle.goto(posX,posY)
         self.display.addshape(os.path.abspath(path))
         imageTurtle.shape(os.path.abspath(path))
-        imageTurtle.goto(posX,posY)
         #[(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
         self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
 
@@ -437,10 +437,11 @@ class engineBattleShip(ClientReseau):
                                 self.boatClic = (None,None)
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
-                            if len(self.all_position)!=17:
-                                print('You still have some inactives ships')
-                            else:
-                                self.StartButton()
+                            self.StartButton() #a supprimer et decommenter le reste du if
+                            #if len(self.all_position)!=17:
+                            #    print('You still have some inactives ships')
+                            #else:
+                            #    self.StartButton()
                         elif key == "exit":
                             self.ExitButton()
                         elif key == "infos":
@@ -688,6 +689,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('coulé')
             elif self.torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
+                self.ILost()
             else:
                 self.client.rapporter('touché')
         elif attack in self.contre_torpilleur: #-------contre torpilleur
@@ -697,6 +699,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('coulé')
             elif self.contre_torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
+                self.ILost()
             else:
                 self.client.rapporter('touché')
         elif attack in self.croiseur: #-------croiseur
@@ -706,6 +709,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('coulé')
             elif self.croiseur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
+                self.ILost()
             else:
                 self.client.rapporter('touché')
         elif attack in self.porte_avions: #-------porte avions
@@ -715,6 +719,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('coulé')
             elif self.porte_avions ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
+                self.ILost()
             else:
                 self.client.rapporter('touché')
         elif attack in self.sous_marin: #-------sous marin
@@ -724,6 +729,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('coulé')
             elif self.sous_marin ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
+                self.ILost()
             else:
                 self.client.rapporter('touché')
         else:
@@ -731,10 +737,25 @@ class engineBattleShip(ClientReseau):
         print("self.sous_marin",self.sous_marin,"    self.porte_avions",self.porte_avions,"     self.croiseur", self.croiseur,"      self.contre_torpilleur", self.contre_torpilleur,"      self.torpilleur", self.torpilleur)
         print("self.all_position", self.all_position)
 
-    def IWon():
-        print("J'AI GAGNÉÉÉÉ")
-    def ILost():
-        print("J'AI PERDUUU")
+    def IWon(self):
+        timee, delayy = time.time(), time.time()
+        print("YOU WON THE GAME")
+        self.Button('start',"image\\WIN.gif",0,0,150,150)
+        while True:
+            if (timee-delayy) > 5:
+                self.display.bye()
+            else:
+                delayy=time.time()
+
+    def ILost(self):
+        timee, delayy = time.time(), time.time()
+        print("YOU LOST THE GAME")
+        self.Button("LOSE","image\\LOSE.gif",0,0,100,100)
+        while True:
+            if (timee-delayy) > 5:
+                self.display.bye()
+            else:
+                delayy=time.time()
 
 
 def Main():
@@ -749,7 +770,7 @@ def Main():
         game = engineBattleShip(800,800)
 
     #Image de fond
-    game.BgImage("image\Background.gif")
+    game.BgImage("image\\Background.gif")
 
     #Grids
     game.DrawGrid("Down Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
@@ -802,9 +823,10 @@ def Main():
                 startTimeResponse = time.time()
                 if rapporter != None:
                     print(rapporter)
-                    if rapporter == "Win": #ne pas oublier de changer la phrase
+                    if rapporter == "Win":
                         game.IWon()
                     break
+        game.IWon()
         
 
         ##text in window title
