@@ -97,6 +97,7 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         reponse = self.__recevoir_async()
         if reponse is not None:
             self.attaque_envoyee = False
+            print(reponse)
             return reponse['cellule']
         else:
             return None
@@ -674,45 +675,18 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-    
-    def Damage(self, attack):
-        ''' Function that treats the attack results and sends them to the other player
-        :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
-        if attack in self.torpilleur:
-            self.torpilleur.remove(attack)
-            self.all_position.remove(attack)
-            if self.torpilleur == []:
-                self.client.rapporter('coulé')
-        elif attack in self.contre_torpilleur:
-            self.contre_torpilleur.remove(attack)
-            self.all_position.remove(attack)
-            if self.contre_torpilleur == []:
-                self.client.rapporter('coulé')
-        elif attack in self.croiseur:
-            self.croiseur.remove(attack)
-            self.all_position.remove(attack)
-            if self.croiseur == []:
-                self.client.rapporter('coulé')
-        elif attack in self.porte_avions:
-            self.porte_avions.remove(attack)
-            self.all_position.remove(attack)
-            if self.porte_avions == []:
-                self.client.rapporter('coulé')
-        elif attack in self.sous_marin:
-            self.sous_marin.remove(attack)
-            self.all_position.remove(attack)
-            if self.sous_marin == []:
-                self.client.rapporter('coulé')
-        else:
-            self.client.rapporter("À l'eau!")
-        if self.all_position==[]:
-            self.client.rapporter("You Win")
 
     def report(self):
         if self.client.rapporter()==None:
             pass
         else:
             print(self.client.rapporter())
+    
+    def Damage(self,Attack):
+        if Attack in self.all_position:
+            self.client.rapporter('Touché')
+        else:
+            self.client.rapporter("A l'eau")
 
 
 def Main():
@@ -764,12 +738,17 @@ def Main():
             game.ItemDetector(game.ClicManager(),game.client.attack_sent())
             timeNow3 = time.time()
             if (timeNow3 - startTimeResponse) >= 0.1:
-                tempClient = game.client.attaquer()
+                tempClient = game.client.attaquer(None)
                 if tempClient != None:
-                    print(tempClient)
+                    tempClient2=(tempClient[0],tempClient[1])
+                    print(tempClient2)
+                    game.Damage(tempClient2)
+                    game.client.rapporter()
                     break
+
+                   
                 startTimeResponse = time.time()
-        game.Damage(tuple(tempClient)) #envoie un tuple (x,y) a Damage
+       # game.Damage(tempClient2) #envoie un tuple (x,y) a Damage
         
 
         #text in window title
