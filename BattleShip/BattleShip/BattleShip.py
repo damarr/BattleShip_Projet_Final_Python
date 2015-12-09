@@ -676,47 +676,35 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=False
     
     def Damage(self, attack):
-        ''' Function that sends the attack results 
+        ''' Function that treats the attack results and sends them to the other player
         :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
-        timeNow2 = time.time()
         if attack in self.torpilleur:
             self.torpilleur.remove(attack)
             self.all_position.remove(attack)
             if self.torpilleur == []:
-                self.client.rapporter('Coulé!')
-                #if self.all_position ==[]:
-                #    self.client.rapporter('Vous avez gagné')
+                self.client.rapporter('coulé')
         elif attack in self.contre_torpilleur:
             self.contre_torpilleur.remove(attack)
             self.all_position.remove(attack)
             if self.contre_torpilleur == []:
-                self.client.rapporter('Coulé!')
-                #if self.all_position ==[]:
-                #    self.client.rapporter('Vous avez gagné')
+                self.client.rapporter('coulé')
         elif attack in self.croiseur:
             self.croiseur.remove(attack)
             self.all_position.remove(attack)
             if self.croiseur == []:
-                self.client.rapporter('Coulé!')
-                #if self.all_position ==[]:
-                #    self.client.rapporter('Vous avez gagné')
+                self.client.rapporter('coulé')
         elif attack in self.porte_avions:
             self.porte_avions.remove(attack)
             self.all_position.remove(attack)
             if self.porte_avions == []:
-                self.client.rapporter('Coulé!')
-                #if self.all_position ==[]:
-                #    self.client.rapporter('Vous avez gagné')
+                self.client.rapporter('coulé')
         elif attack in self.sous_marin:
             self.sous_marin.remove(attack)
             self.all_position.remove(attack)
             if self.sous_marin == []:
-                self.client.rapporter('Coulé!')
-                #if self.all_position ==[]:
-                #    self.client.rapporter('Vous avez gagné')
+                self.client.rapporter('coulé')
         else:
             self.client.rapporter("À l'eau!")
-        
         if self.all_position==[]:
             self.client.rapporter("You Win")
 
@@ -758,7 +746,7 @@ def Main():
     game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
     
     #Main loops
-
+    print(game.contre_torpilleur, game.torpilleur, game.croiseur, game.porte_avions, "all position:", game.all_position)
     startTimeResponse = time.time()
     while game.GetWhileValue():
         #Initial window title
@@ -778,9 +766,11 @@ def Main():
             if (timeNow3 - startTimeResponse) >= 0.1:
                 tempClient = game.client.attaquer()
                 if tempClient != None:
+                    print(tempClient)
                     break
                 startTimeResponse = time.time()
-        game.Damage(tempClient) #envoie un tuple (x,y) a Damage
+        game.Damage(tuple(tempClient)) #envoie un tuple (x,y) a Damage
+        
 
         #text in window title
         if game.client.attack_sent()==False:
