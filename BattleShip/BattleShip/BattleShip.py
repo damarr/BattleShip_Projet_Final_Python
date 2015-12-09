@@ -679,20 +679,44 @@ class engineBattleShip(ClientReseau):
                     self.is_a_boat=True
                 else:
                     self.is_a_boat=False
-
-    #def report(self):
-    #    if self.client.rapporter()==None:
-    #        pass
-    #    else:
-    #        print(self.client.rapporter())
     
-    def Damage(self,Attack):
+    def Damage(self, attack):
         ''' Function that treats the attack results and sends them to the other player
         :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
-        if Attack in self.all_position:
-            self.client.rapporter('Touché')
+        if attack in self.torpilleur:
+            self.client.rapporter('touché')
+            self.torpilleur.remove(attack)
+            self.all_position.remove(attack)
+            if self.torpilleur == []:
+                self.client.rapporter('coulé')
+        elif attack in self.contre_torpilleur:
+            self.client.rapporter('touché')
+            self.contre_torpilleur.remove(attack)
+            self.all_position.remove(attack)
+            if self.contre_torpilleur == []:
+                self.client.rapporter('coulé')
+        elif attack in self.croiseur:
+            self.client.rapporter('touché')
+            self.croiseur.remove(attack)
+            self.all_position.remove(attack)
+            if self.croiseur == []:
+                self.client.rapporter('coulé')
+        elif attack in self.porte_avions:
+            self.client.rapporter('touché')
+            self.porte_avions.remove(attack)
+            self.all_position.remove(attack)
+            if self.porte_avions == []:
+                self.client.rapporter('coulé')
+        elif attack in self.sous_marin:
+            self.client.rapporter('touché')
+            self.sous_marin.remove(attack)
+            self.all_position.remove(attack)
+            if self.sous_marin == []:
+                self.client.rapporter('coulé')
         else:
-            self.client.rapporter("A l'eau")
+            self.client.rapporter("à l'eau")
+        if self.all_position==[]:
+            self.client.rapporter("Vous gagnez")
 
 
 def Main():
