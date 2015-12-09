@@ -733,18 +733,23 @@ def Main():
     print("You are playing against : " + str(game.client.adversaire()))
     while True:
         #Actual gameplay
-        tempClient = None
+        tempClient=None
+        print(1)
         while tempClient == None:
+            print(2)
             game.ItemDetector(game.ClicManager(),game.client.attack_sent())
             timeNow3 = time.time()
             if (timeNow3 - startTimeResponse) >= 0.1:
+                print(3)
                 tempClient = game.client.attaquer(None)
                 if tempClient != None:
+                    print(4)
                     tempClient2=(tempClient[0],tempClient[1])
                     print(tempClient2)
                     game.Damage(tempClient2)
-                    game.client.rapporter()
+                    #game.client.rapporter()
                     break
+
 
                    
                 startTimeResponse = time.time()
