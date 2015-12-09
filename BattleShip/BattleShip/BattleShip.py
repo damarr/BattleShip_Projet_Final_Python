@@ -747,10 +747,11 @@ def Main():
                     tempClient2=(tempClient[0],tempClient[1])
                     print(tempClient2)
                     game.Damage(tempClient2)
-                    timeNow4 = time.time()
-                    if (timeNow4 - startTimeResponse) >= 1:
-                        game.client.rapporter()
-                        break
+                    #game.client.rapporter()
+                    break
+
+
+                   
                 startTimeResponse = time.time()
        # game.Damage(tempClient2) #envoie un tuple (x,y) a Damage
         
