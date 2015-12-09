@@ -776,7 +776,8 @@ def Main():
                 if tempClient != None:
                     print(tempClient)
                     break
-        game.Damage(tempClient) # on rapporte notre resultat de l'attaque a l'autre joueur
+        tempClient2=(tempClient[0],tempClient[1])
+        game.Damage(tempClient2) # on rapporte notre resultat de l'attaque a l'autre joueur
         rapporter = None
         while rapporter == None: # boucle qui attend le résultat de l'attaque de l'autre joueur
             timeNow3 = time.time()
