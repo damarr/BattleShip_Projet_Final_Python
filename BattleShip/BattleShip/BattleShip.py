@@ -160,9 +160,9 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         ":returns: True or False if attack already sent to other player"
         return self.attaque_envoyee
 
-    #def report_sent(self):
-    #    ":returns: True or False if report already sent to other player"
-    #    return self.rapport_envoyee
+    def report_sent(self):
+        ":returns: True or False if report already sent to other player"
+        return self.rapport_envoyee
 
 class engineBattleShip(ClientReseau):
     "Class that contains the whole engine of the game"
@@ -246,7 +246,9 @@ class engineBattleShip(ClientReseau):
         webbrowser.open("https://github.com/Damfurrywolf/BattleShip_Projet_Final_Python")
 
     def WindowTitleNotification(self,timeToElapse,text1,text2,text3 = None):
-        "Sends a notification to the player by changing the name of the window"
+        """Sends a notification to the player by changing the name of the window
+        :param timeToElapse: set in seconds the time between notifications
+        :param text1/text2"""
         timeNow = time.time()
         if (timeNow - self.startTime) >= timeToElapse:
             if self.title == text1:
@@ -789,8 +791,8 @@ def Main():
         ##text in window title
         #if game.client.attack_sent()==False:
         #    game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        #elif game.client.attack_sent()==True:
-        #    game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+        #elif game.client.attack_sent()==True or game.client.report_sent()==True :
+        #    game.WindowTitleNotification(1,"Please wait.","Please wait..","Please wait...")
         #game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
