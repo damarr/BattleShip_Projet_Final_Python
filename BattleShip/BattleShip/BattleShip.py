@@ -740,7 +740,6 @@ class engineBattleShip(ClientReseau):
     def IWon(self):
         timee, delayy = time.time(), time.time()
         print("YOU WON THE GAME")
-        self.Button('start',"image\\WIN.png",0,0,150,150)
         while True:
             if (timee-delayy) > 5:
                 self.display.bye()
@@ -750,7 +749,6 @@ class engineBattleShip(ClientReseau):
     def ILost(self):
         timee, delayy = time.time(), time.time()
         print("YOU LOST THE GAME")
-        self.Button("LOSE","image\\LOSE.png",0,0,100,100)
         while True:
             if (timee-delayy) > 5:
                 self.display.bye()
@@ -826,7 +824,6 @@ def Main():
                     if rapporter == "Win":
                         game.IWon()
                     break
-        game.IWon()
         
 
         ##text in window title
