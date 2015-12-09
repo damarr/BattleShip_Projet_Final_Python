@@ -160,6 +160,10 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         ":returns: True or False if attack already sent to other player"
         return self.attaque_envoyee
 
+    #def report_sent(self):
+    #    ":returns: True or False if report already sent to other player"
+    #    return self.rapport_envoyee
+
 class engineBattleShip(ClientReseau):
     "Class that contains the whole engine of the game"
     def __init__(self,sizeWidth,sizeHeight):
@@ -676,13 +680,15 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-    def report(self):
-        if self.client.rapporter()==None:
-            pass
-        else:
-            print(self.client.rapporter())
+    #def report(self):
+    #    if self.client.rapporter()==None:
+    #        pass
+    #    else:
+    #        print(self.client.rapporter())
     
     def Damage(self,Attack):
+        ''' Function that treats the attack results and sends them to the other player
+        :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
         if Attack in self.all_position:
             self.client.rapporter('Touché')
         else:
@@ -733,35 +739,35 @@ def Main():
     print("You are playing against : " + str(game.client.adversaire()))
     while True:
         #Actual gameplay
+        #attaquer is in ItemDetector and the attack is sent when valid case is clicked
         tempClient=None
-        print(1)
-        while tempClient == None:
-            print(2)
-            game.ItemDetector(game.ClicManager(),game.client.attack_sent())
+        while tempClient == None: #loop pour attendre l'attaque de l'adversaire
+            game.ItemDetector(game.ClicManager(),game.client.attack_sent()) #ici on detecte lattaque du joueur
             timeNow3 = time.time()
             if (timeNow3 - startTimeResponse) >= 0.1:
-                print(3)
-                tempClient = game.client.attaquer(None)
+                tempClient = game.client.attaquer()
+                startTimeResponse =  time.time()
                 if tempClient != None:
-                    print(4)
-                    tempClient2=(tempClient[0],tempClient[1])
-                    print(tempClient2)
-                    game.Damage(tempClient2)
-                    #game.client.rapporter()
+                    print(tempClient)
                     break
-
-
-                   
+        game.Damage(tempClient) # on rapporte notre resultat de l'attaque a l'autre joueur
+        rapporter = None
+        while rapporter == None: # boucle qui attend le résultat de l'attaque de l'autre joueur
+            timeNow3 = time.time()
+            if (timeNow3-startTimeResponse) >= 0.1:
+                rapporter = game.client.rapporter()
                 startTimeResponse = time.time()
-       # game.Damage(tempClient2) #envoie un tuple (x,y) a Damage
+                if rapporter != None:
+                    print(rapporter)
+                    break
         
 
-        #text in window title
-        if game.client.attack_sent()==False:
-            game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        elif game.client.attack_sent()==True:
-            game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
-        game.ItemDetector(game.ClicManager())
+        ##text in window title
+        #if game.client.attack_sent()==False:
+        #    game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
+        #elif game.client.attack_sent()==True:
+        #    game.WindowTitleNotification(1,"Please wait for your opponent to attack.","Please wait for your opponent to attack..","Please wait for your opponent to attack...")
+        #game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
     Main()
