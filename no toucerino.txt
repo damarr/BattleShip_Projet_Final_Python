@@ -1,0 +1,11 @@
+    def SquarePixelPos(self,name,tupleSquarePos): 
+        ''' Returns the position in pixels of a selected square in a grid. Returns a tuple. Needs the name of the grid and the position inside that grid of the square wanted'''
+        for key in self.itemdictionary:
+            if key == name:
+                temp = self.itemdictionary.get(key)[0]
+                temp2 = self.itemdictionary.get(key)[1]
+                tempPosition = self.itemdictionary.get(key)[3]
+                pixelPerSquare = temp[0]/temp2[0]
+                tempPositionX = tupleSquarePos[0] * pixelPerSquare + tempPosition[0]
+                tempPositionY = tempPosition[1] - (tupleSquarePos[1] * pixelPerSquare)
+        return (tempPositionX,tempPositionY)
