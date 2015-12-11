@@ -10,9 +10,6 @@ __coequipiers__ = "IDUL", "IDUL"
 #import standard modules
 import json, socket, time, turtle, os, webbrowser, argparse, sys
 
-class Protestation(Exception):
-    pass
-
 class ClientReseau(object):
     """Client réseau pour jeu en-ligne.
     :param pseudo: votre pseudonyme.
@@ -177,7 +174,7 @@ class ClientReseau(object):
         ":returns: True or False if report already sent to other player"
         return self.rapport_envoyee
 
-class engineBattleShip(ClientReseau):
+class EngineBattleShip(ClientReseau):
     """Class that contains the whole engine of the game
     :param sizeWidth: determines the width of the game's window
     :param sizeHeight: determines the height of the game's window"""
@@ -185,29 +182,29 @@ class engineBattleShip(ClientReseau):
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
-        self.username=self.GetUserName()
-        self.otherplayer=self.GetOtherName()
+        self.username=self.getUserName()
+        self.otherplayer=self.getOtherName()
         self.client = ClientReseau(self.username,self.otherplayer)
-        self.whileValue = True
-        self.clicTurtle = turtle.Turtle()
+        self.whilevalue = True
+        self.clicturtle = turtle.Turtle()
         self.itemdictionary = {} #initialisation du dictionnaire
         self.turtlekiller = []
         self.x = 0
         self.y = 0
-        self.startTime = 0
+        self.starttime = 0
         self.title = ''
-        self.caseX = None
-        self.caseY = None
+        self.casex = None
+        self.casey = None
         self.orientation=True
         self.drawing_turtle=turtle.Turtle()
         self.drawing_turtle.fillcolor("gray")
         self.drawing_turtle.ht()
-        self.attackTurtle = turtle.Turtle()
-        self.attackTurtle.hideturtle()
-        self.attackTurtle.penup()
-        self.boatClic = (None,None)
-        self.squareSizeAtt = 0
-        self.squareSizeShot = 0
+        self.attackturtle = turtle.Turtle()
+        self.attackturtle.hideturtle()
+        self.attackturtle.penup()
+        self.boatclic = (None,None)
+        self.squaresizeatt = 0
+        self.squaresizeshot = 0
         self.torpilleur=[]
         self.contre_torpilleur=[]
         self.sous_marin=[]
@@ -215,61 +212,60 @@ class engineBattleShip(ClientReseau):
         self.porte_avions=[]
         self.all_position=[]
         self.is_a_boat=False
-        self.secondTime = 0
 
-    def GetUserName(self): 
-        "Function asking your username and sends it to the BattleShip init"
+    def getUserName(self): 
+        "Asks the username in a pop up window and sends it to the BattleShip init"
         return self.display.textinput("Your username", "Enter your username : ")
     
-    def GetOtherName(self): #a ameliorer un peu
-        "Function asking your enemy username and send it to the BattleShip init, if nothing is written it will send None"
-        self.otherplayerstring=self.display.textinput("Your enemy", "Enter your enemy username, let blank for a random enemy : ")
+    def getOtherName(self): #a ameliorer un peu
+        """Function asking enemy username , if nothing is written it will send None"""
+        self.otherplayerstring=self.display.textinput("Your enemy", 
+         "Enter your enemy username, let blank for a random enemy : ")
         if self.otherplayerstring=='':
             return None
         else:
             return self.otherplayerstring
 
-    def Clear(self):
-        "Clear the display"
-        self.display.clear()
+    def getWhileValue(self):
+        """:returns: True or False if the game has started"""
+        return self.whilevalue
 
-    def GetWhileValue(self):
-        return self.whileValue
-
-    def BgImage(self,path):
+    def bgImage(self,path):
         "Add a background to the display"
         self.display.bgpic(os.path.abspath(path))
 
-    def Button(self,name,path,posX,posY,lenght,height): #not 100% good yet
-        "Create buttons, using images in the game folder. Needs: name of the object, image path , X and Y position, width and height of the image in pixels"
-        imageTurtle = turtle.Turtle()
-        imageTurtle.penup()
-        imageTurtle.goto(posX,posY)
+    def button(self,name,path,posx,posy,lenght,height):
+        """Create buttons, using images in the game folder. 
+        :params: name of the object, image path , X and Y position, width 
+        and height of the image in pixels"""
+        imageturtle = turtle.Turtle()
+        imageturtle.penup()
+        imageturtle.goto(posx,posy)
         self.display.addshape(os.path.abspath(path))
-        imageTurtle.shape(os.path.abspath(path))
-        #[(windowWidth - 2*margin,windowWidth - 2*margin),(nbHeight,nbHeight),(posX,posY),(rawX,rawY)]
-        self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posX - (lenght/2),posY + (height/2))]
+        imageturtle.shape(os.path.abspath(path))
+        self.itemdictionary[name] = [(lenght,height),(0,0),(0,0),(posx - (lenght/2),posy + (height/2))]
 
-    def StartButton(self):
-        "Changes the part of the game the player is in"
+    def startButton(self):
+        "Changes the game's state after all the boats are placed"
         if len(self.all_position)==17:
-            self.whileValue = False
+            self.whilevalue = False
         else:
             print('You are not ready to start yet')
 
-    def ExitButton(self):
+    def exitButton(self):
         "Quits the program"
         self.display.bye()
 
-    def InfoButton(self):
+    def protestButton(self):
+        """ Button which allows the player to protest and write the complain"""
         self.client.protester(self.display.textinput("Protest", "Complain : "))
 
-    def WindowTitleNotification(self,timeToElapse,text1,text2,text3 = None):
+    def windowTitleNotification(self,timeToElapse,text1,text2,text3 = None):
         """Sends a notification to the player by changing the name of the window
         :param timeToElapse: set in seconds the time between notifications
         :param text1/text2"""
         timeNow = time.time()
-        if (timeNow - self.startTime) >= timeToElapse:
+        if (timeNow - self.starttime) >= timeToElapse:
             if self.title == text1:
                 self.title = text2
                 self.display.title(text2)
@@ -286,27 +282,29 @@ class engineBattleShip(ClientReseau):
             else:
                 self.title = text1
                 self.display.title(text1)
-            self.startTime = time.time()
+            self.starttime = time.time()
 
-    def AttackPos(self,clicPosition):
+    def attackPos(self,clicposition):
         "Fonction that returns the position clicked by the player that's attacking"
-        name = "Up Grid"
-        key = name
-        temp = self.itemdictionary.get(key)[0]
-        temp2 = self.itemdictionary.get(key)[1]
-        tempPosition = self.itemdictionary.get(key)[3]
-        pixelPerSquare = temp[0]/temp2[0]
-        clicPosition2 = clicPosition
+        temp = self.itemdictionary.get("Up Grid")[0]
+        temp2 = self.itemdictionary.get("Up Grid")[1]
+        tempposition = self.itemdictionary.get("Up Grid")[3]
+        pixelpersquare = temp[0]/temp2[0]
+        clicposition2 = clicposition
         for w in range (temp2[0] + 1):
-            if clicPosition2[0] < ((w * pixelPerSquare) + tempPosition[0]):
+            if clicposition2[0] < ((w * pixelpersquare) + tempposition[0]):
                 break
         for h in range (temp2[1] + 1):
-            if (clicPosition2[1] > (tempPosition[1] - (h * pixelPerSquare))):
+            if (clicposition2[1] > (tempposition[1] - (h * pixelpersquare))):
                 break
         return((w,h))
 
-    def DrawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
-        "Fonction that creates a grid. Requires : Name of the grid, numbre of squares in both width and height, gap space size for the sides, X and Y position, RBG color for the grid and one for the filling of the squares"
+    def drawGrid(self,itemName,nbHeight,margin,windowWidth,posX,posY,
+                 PengridR,PengridG,PengridB,FillgridR,FillgridG,FillgridB):
+        """Fonction that creates a grid. 
+        :params: Name of the grid, number of squares in both width and height,
+        gap space size for the sides, X and Y position, 
+        RBG color for the grid and one for the filling of the squares"""
         pixelPerSquare = (windowWidth - 2*margin)/nbHeight
         compensation = windowWidth/2
         basicTurtle = turtle.Turtle()
@@ -349,26 +347,17 @@ class engineBattleShip(ClientReseau):
             basicTurtle.back(windowWidth - 2*margin)
             basicTurtle.penup()
 
-
-    def GetRawItemPosition(self,name):
-       "Returns the position of the specified item"
-       return(self.itemdictionary.get(name)[3])
-
-    def GetGridSquareSize(self,name):
-        "Returns the number of squares in width and height of the grid entered (Same number of squares both ways)"
+    def getGridSquareSize(self,name):
+        "Returns the number of squares in width and height of the grid entered"
         stuff = self.itemdictionary.get(name)[1]
         return(stuff[0])
-    
 
-    def GetItemSize(self,name):
-        "Returns the size of the specified item in a tuple"
-        return(self.itemdictionary.get(name)[0])
-
-
-    def ClicManager(self):
-        """Detects the clicks of the user and returns the name of the object that the user clicked
-        :returns: (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates"""
-        self.turtlekiller.append(self.clicTurtle)
+    def clicManager(self):
+        """Detects the clicks of the user and returns the name of the object 
+        that the user clicked.
+        :returns: (key,(posX,posY)) where key is the item name and 
+        posX and posY are raw coordinates."""
+        self.turtlekiller.append(self.clicturtle)
         victimTurtle = self.turtlekiller[0]
         victimTurtle._tracer(10,1000)
         victimTurtle.penup()
@@ -385,16 +374,18 @@ class engineBattleShip(ClientReseau):
                 posXItem = temp[0]
                 posYItem = temp[1]
                 if (posX >= posXItem and posX <= posXItem + lenght) and (posYItem >= posY and posY >= posYItem - height):
-                    self.clicTurtle.goto(0,0)
+                    self.clicturtle.goto(0,0)
                     return((key,(posX,posY)))
         self.turtlekiller.clear()
 
-    def GridDecomposer(self,name,clicPosition): 
-        """Returns the raw X and Y position of the top left square corner clicked by the user
-        :param: name is the name of the grid
-        :param: clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
+    def gridDecomposer(self,name,clicPosition): 
+        """Returns the raw X and Y position of the top left square 
+        corner clicked by the user.
+        :param: name is the name of the grid.
+        :param: clicPosition is (key,(posX,posY)) where key is the item 
+        name and posX and posY are raw coordinates.
         :returns: (positionX,positionY) where positionX and positionY 
-                                   are raw X and Y position of the top left square corner"""
+        are raw X and Y position of the top left square corner."""
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
@@ -404,110 +395,116 @@ class engineBattleShip(ClientReseau):
                 clicPosition2 = clicPosition[1]
                 for x in range (temp2[0] + 1):
                     if clicPosition2[0] < ((x * pixelPerSquare) + tempPosition[0]):
-                        self.caseX = x
+                        self.casex = x
                         break
                 for y in range (temp2[1] + 1):
                     if (clicPosition2[1] > (tempPosition[1] - (y * pixelPerSquare))):
-                        self.caseY = y
+                        self.casey = y
                         break
         positionX = ((x -1) * pixelPerSquare) + tempPosition[0]
         positionY = tempPosition[1] - ((y - 1) * pixelPerSquare)
         return (positionX,positionY)
 
-    def GetClickedSquare(self):
+    def getClickedSquare(self):
         ''' Get case number from the grid 
-        :returns: (caseX, caseY) a tuple which identifies the case between 0 and 9 '''
-        if self.caseX != None and self.caseY != None:
-            transitionX = self.caseX
-            transitionY = self.caseY
-            self.caseX = None
-            self.caseY = None
+        :returns: (casex, casey) a tuple which identifies the case 
+        between 0 and 9.'''
+        if self.casex != None and self.casey != None:
+            transitionX = self.casex
+            transitionY = self.casey
+            self.casex = None
+            self.casey = None
             return ((transitionX-1,transitionY-1))
     
-    def ItemDetector(self,clicPosition,attaqueEnvoyee=None):
+    def itemDetector(self,clicPosition,attaqueEnvoyee=None):
         '''Treats items which are in itemdictionnary
-        :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
+        :param clicPosition is (key,(posX,posY)) where key is the item 
+        name and posX and posY are raw coordinates.
         :returns: nothing'''
         if (clicPosition != None):
             for key in self.itemdictionary:
                 if (key == clicPosition[0]):
                     shortcut = self.itemdictionary.get(key)
                     if (shortcut[1] != (0,0)):
-                        self.GridDecomposer(key,clicPosition) 
-                        self.squareSizeAtt = self.GetGridSquareSize("Down Grid")
-                        self.squareSizeShot = self.GetGridSquareSize("Up Grid")
-                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueEnvoyee != True: 
-                            self.attackTurtle.goto(self.GridDecomposer("Up Grid",clicPosition))
-                            self.attackedSquare = self.GetClickedSquare()
-                            self.attackTurtle.pencolor('white')
-                            self.attackTurtle.begin_fill()
+                        self.gridDecomposer(key,clicPosition) 
+                        self.squaresizeatt = self.getGridSquareSize("Down Grid")
+                        self.squaresizeshot = self.getGridSquareSize("Up Grid")
+                        if key == "Up Grid" and self.getWhileValue() != True and attaqueEnvoyee != True: 
+                            self.attackturtle.goto(self.gridDecomposer("Up Grid",clicPosition))
+                            self.attackedSquare = self.getClickedSquare()
+                            self.attackturtle.pencolor('white')
+                            self.attackturtle.begin_fill()
                             correction = 4
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] - self.squareSizeShot * 2 - correction)
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0] - self.squareSizeShot * 2 - correction, self.attackTurtle.pos()[1])
-                            self.attackTurtle.goto(self.attackTurtle.pos()[0],self.attackTurtle.pos()[1] + self.squareSizeShot * 2 + correction)
-                            self.attackTurtle.end_fill()
-                            tempPosX = self.AttackPos(self.attackTurtle.pos())[0] - 1
-                            tempPosY = self.AttackPos(self.attackTurtle.pos())[1] - 1
+                            self.attackturtle.goto(self.attackturtle.pos()[0] + self.squaresizeshot * 2 + correction,self.attackturtle.pos()[1])
+                            self.attackturtle.goto(self.attackturtle.pos()[0],self.attackturtle.pos()[1] - self.squaresizeshot * 2 - correction)
+                            self.attackturtle.goto(self.attackturtle.pos()[0] - self.squaresizeshot * 2 - correction, self.attackturtle.pos()[1])
+                            self.attackturtle.goto(self.attackturtle.pos()[0],self.attackturtle.pos()[1] + self.squaresizeshot * 2 + correction)
+                            self.attackturtle.end_fill()
+                            tempPosX = self.attackPos(self.attackturtle.pos())[0] - 1
+                            tempPosY = self.attackPos(self.attackturtle.pos())[1] - 1
                             self.client.attaquer((tempPosX,tempPosY))
 
-                        if self.boatClic != (None,None):
-                            if key != "Up Grid" and self.GetWhileValue() == True: 
-                                self.BoatButton(self.GridDecomposer(key,clicPosition))
-                                self.boatClic = (None,None)
+                        if self.boatclic != (None,None):
+                            if key != "Up Grid" and self.getWhileValue() == True: 
+                                self.boatButton(self.gridDecomposer(key,clicPosition))
+                                self.boatclic = (None,None)
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
-                            self.StartButton() #a supprimer et decommenter le reste du if
+                            self.startButton() #a supprimer et decommenter le reste du if
                             #if len(self.all_position)!=17:
                             #    print('You still have some inactives ships')
                             #else:
-                            #    self.StartButton()
+                            #    self.startButton()
                         elif key == "exit":
-                            self.ExitButton()
+                            self.exitButton()
                         elif key == "infos":
-                            self.InfoButton()
+                            self.protestButton()
                         elif (key=="porte-avions") or (key=="contre-torpilleur") or (key=="sous-marin") or (key=="croiseur") or (key=="torpilleur"):
-                            self.Boat(key)
+                            self.boat(key)
                             self.orientation=True
 
-    def BoatVertical(self):
+    def boatVertical(self):
         ''' Allows to place vertical boats using right arrow '''
-        if self.GetWhileValue()==True:
+        if self.getWhileValue()==True:
             self.display.onkeypress(None,'Right')
             self.orientation=True
-            self.display.onkeypress(self.BoatVertical,'Right')
+            self.display.onkeypress(self.boatVertical,'Right')
             print("The boat is vertical")
 
-    def BoatHorizontal(self):
+    def boatHorizontal(self):
         ''' Allows to place horizontal boats using left arrow'''
-        if self.GetWhileValue()==True:
+        if self.getWhileValue()==True:
             self.display.onkeypress(None,'Left')
             self.orientation=False
-            self.display.onkeypress(self.BoatHorizontal,'Left')
+            self.display.onkeypress(self.boatHorizontal,'Left')
             print("The boat is horizontal")
 
 
-    def BoatButton(self,position):
-        '''Function which allows the click following the click on an icon boat to place the boat in the grid '''
-        squarePosition=self.GetClickedSquare()
-        self.IsThereABoat(squarePosition)
+    def boatButton(self,position):
+        '''Function which allows the click following the click on an 
+        icon boat to place the boat in the grid '''
+        squarePosition=self.getClickedSquare()
+        self.isThereABoat(squarePosition)
         if squarePosition != (None,None):
-            for i in range (self.boatClic[0]):
+            for i in range (self.boatclic[0]):
                 if self.orientation==True:
                     self.square_size = 38
                     self.drawing_turtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
-                    self.testv=position[1]-self.square_size*(self.boatClic[0]-1)
-                    self.testh=position[0]-self.square_size*(self.boatClic[0]-1)
+                    self.testv=position[1]-self.square_size*(self.boatclic[0]-1)
+                    self.testh=position[0]-self.square_size*(self.boatclic[0]-1)
                     if self.testv>=-302 and self.is_a_boat==False:
                         self.drawing_turtle.penup()
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.pendown()
                         self.drawing_turtle.begin_fill()
-                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
-                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                                                 self.color_y)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                                                 self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,
+                                                 self.color_y-self.square_size)
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.end_fill()        
                 else:
@@ -515,118 +512,123 @@ class engineBattleShip(ClientReseau):
                     self.drawing_turtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
-                    self.testh=position[0]+self.square_size*(self.boatClic[0]-1)
+                    self.testh=position[0]+self.square_size*(self.boatclic[0]-1)
                     if self.testh <= 152 and self.is_a_boat==False:
                         self.drawing_turtle.penup()
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.pendown()
                         self.drawing_turtle.begin_fill()
-                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y)
-                        self.drawing_turtle.goto(self.color_x+self.square_size,self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                                                 self.color_y)
+                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                                                 self.color_y-self.square_size)
+                        self.drawing_turtle.goto(self.color_x,
+                                                 self.color_y-self.square_size)
                         self.drawing_turtle.goto(self.color_x,self.color_y)
                         self.drawing_turtle.end_fill()
             self.BoatDict(squarePosition)
 
-    def Boat(self,key):
-        ''' Allows the program to differentiate which boat is placed on the grid '''
+    def boat(self,key):
+        "Allows the program to differentiate which boat is placed on the grid"
         if key == "sous-marin":
             if self.sous_marin==[]:
-                self.boatClic = (3,"sous-marin")
+                self.boatclic = (3,"sous-marin")
             else:
                 print("This ship is already on the map")
         elif key == "contre-torpilleur":
             if self.contre_torpilleur==[]:
-                self.boatClic = (3,"contre-torpilleur")
+                self.boatclic = (3,"contre-torpilleur")
             else:
                 print("This ship is already on the map")
         elif key =="porte-avions":
             if self.porte_avions==[]:
-                self.boatClic = (5,"porte-avions")
+                self.boatclic = (5,"porte-avions")
             else:
                 print("This ship is already on the map")
         elif key =="torpilleur":
             if self.torpilleur==[]:
-                self.boatClic = (2,"torpilleur")
+                self.boatclic = (2,"torpilleur")
             else:
                 print("This ship is already on the map")
         elif key =="croiseur":
             if self.croiseur==[]:
-              self.boatClic = (4,"croiseur")
+              self.boatclic = (4,"croiseur")
             else:
                 print("This ship is already on the map")
         
     def BoatDict(self, position):
         ''' Add ships position in a liste '''
         self.squarePosition=position
-        self.IsThereABoat(self.squarePosition)
-        if self.boatClic==(3,"sous-marin"):
+        self.isThereABoat(self.squarePosition)
+        if self.boatclic==(3,"sous-marin"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                             self.sous_marin.append((position[0],position[1]+i))
                             self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh <= 152 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.sous_marin.append((position[0]+i,position[1]))
                         self.all_position.append((position[0]+i,position[1]))
 
 
-        if self.boatClic==(2,"torpilleur"):
+        if self.boatclic==(2,"torpilleur"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.torpilleur.append((position[0],position[1]+i))
                         self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh <= 152 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.torpilleur.append((position[0]+i,position[1])) 
                         self.all_position.append((position[0]+i,position[1]))
         
-        if self.boatClic==(3,"contre-torpilleur"):
+        if self.boatclic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.contre_torpilleur.append((position[0],position[1]+i))
                         self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh <= 152 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.contre_torpilleur.append((position[0]+i,position[1])) 
                         self.all_position.append((position[0]+i,position[1]))
                         print(self.all_position) 
 
 
-        if self.boatClic==(5,"porte-avions"):
+        if self.boatclic==(5,"porte-avions"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.porte_avions.append((position[0],position[1]+i))
                         self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh<=152 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.porte_avions.append((position[0]+i,position[1]))
                         self.all_position.append((position[0]+i,position[1])) 
                        
-        if self.boatClic==(4,"croiseur"):
+        if self.boatclic==(4,"croiseur"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.croiseur.append((position[0],position[1]+i))
                         self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh<=152 and self.is_a_boat==False:    
-                    for i in range (self.boatClic[0]):
+                    for i in range (self.boatclic[0]):
                         self.croiseur.append((position[0]+i,position[1]))
                         self.all_position.append((position[0]+i,position[1])) 
 
 
-    def IsThereABoat(self, position):
-        ''' Function that check if the position where the player want to place his ship is already used by another ship. It prevent boat stacking '''
-        if self.boatClic==(3,"sous-marin") or self.boatClic==(3,"contre-torpilleur"):
+    def isThereABoat(self, position):
+        ''' Function that checks if the position where the player want to 
+        place his ship is already used by another ship. 
+        It prevents boat stacking '''
+        if self.boatclic==(3,"sous-marin") or self.boatclic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
                     self.is_a_boat=True
@@ -639,7 +641,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
         
-        if self.boatClic==(2,"torpilleur"):
+        if self.boatclic==(2,"torpilleur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position:
                     self.is_a_boat=True
@@ -658,7 +660,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-        if self.boatClic==(4,"croiseur"):
+        if self.boatclic==(4,"croiseur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position:
                     self.is_a_boat=True
@@ -671,7 +673,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-        if self.boatClic==(3,"porte-avions"):
+        if self.boatclic==(3,"porte-avions"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
                     self.is_a_boat=True
@@ -684,7 +686,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
 
-        if self.boatClic==(3,"porte-avions"):
+        if self.boatclic==(3,"porte-avions"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position or (position[0],position[1]+3) in self.all_position or (position[0],position[1]+4) in self.all_position:
                     self.is_a_boat=True
@@ -697,7 +699,7 @@ class engineBattleShip(ClientReseau):
                 else:
                     self.is_a_boat=False
     
-    def Damage(self, attack):
+    def damage(self, attack):
         ''' Function that treats the attack results and sends them to the other player
         :param attack: a tuple (x,y) which are grid coordinates between 0 and 9'''
         if attack in self.torpilleur: #-------torpilleur
@@ -707,7 +709,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('Hit and Sank')
             elif self.torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.LoseAnim()
+                self.loseAnim()
             else:
                 self.client.rapporter('Hit')
         elif attack in self.contre_torpilleur:
@@ -717,7 +719,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('Ht and sank')
             elif self.contre_torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.LoseAnim()
+                self.loseAnim()
             else:
                 self.client.rapporter('Hit')
         elif attack in self.croiseur:
@@ -727,7 +729,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('Hit and Sank')
             elif self.croiseur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.LoseAnim()
+                self.loseAnim()
             else:
                 self.client.rapporter('Hit and sank')
         elif attack in self.porte_avions:
@@ -737,7 +739,7 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('Hit and Sank')
             elif self.porte_avions ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.LoseAnim()
+                self.loseAnim()
             else:
                 self.client.rapporter('Hit')
         elif attack in self.sous_marin:
@@ -747,15 +749,15 @@ class engineBattleShip(ClientReseau):
                 self.client.rapporter('Hit and sank')
             elif self.sous_marin ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.LoseAnim()
+                self.loseAnim()
             else:
                 self.client.rapporter('Hit')
         else:
             self.client.rapporter("Miss")
         print(self.all_position)
 
-    def WinAnim(self,report):
-        ''' Create a win animation at the end of the game '''
+    def winAnim(self,report):
+        ''' Creates a win animation at the end of the game '''
         if report=='Win':
             self.Win_turtle=turtle.Turtle()
             self.Win_turtle.ht()
@@ -770,9 +772,10 @@ class engineBattleShip(ClientReseau):
             self.Win_turtle.penup()
             self.Win_turtle.goto(-400,0)
             self.Win_turtle.color('white')
-            self.Win_turtle.write('Victory!', move=False, align="left", font=("Arial", 180, "normal"))
+            self.Win_turtle.write('Victory!', move=False, 
+                                  align="left", font=("Arial", 180, "normal"))
 
-    def LoseAnim(self):
+    def loseAnim(self):
         '''Create a lose animation at the end of the game '''
         self.Win_turtle=turtle.Turtle()
         self.Win_turtle.ht()
@@ -787,20 +790,28 @@ class engineBattleShip(ClientReseau):
         self.Win_turtle.penup()
         self.Win_turtle.goto(-400,0)
         self.Win_turtle.color('white')
-        self.Win_turtle.write('Defeat!', move=False, align="left", font=("Arial", 180, "normal"))
+        self.Win_turtle.write('Defeat!', move=False, align="left", 
+                              font=("Arial", 180, "normal"))
     
-    def SquarePixelPos(self,name,tupleSquarePos): 
-        ''' Returns the position in pixels of a selected square in a grid. Returns a tuple. Needs the name of the grid and the position inside that grid of the square wanted'''
+    def squarePixelPos(self,name,tupleSquarePos): 
+        ''' Returns the position in pixels of a selected square in a grid.
+        :params: name of the grid and the position inside that grid 
+        of the designed square.
+        :returns: a tuple of the position in pixels.'''
         for key in self.itemdictionary:
             if key == name:
                 temp = self.itemdictionary.get(key)[0]
                 temp2 = self.itemdictionary.get(key)[1]
                 tempPosition = self.itemdictionary.get(key)[3]
                 pixelPerSquare = temp[0]/temp2[0]
-                tempPositionX = tupleSquarePos[0] * pixelPerSquare + tempPosition[0]
-                tempPositionY = tempPosition[1] - (tupleSquarePos[1] * pixelPerSquare)
+                tempPositionX = tupleSquarePos[0]*pixelPerSquare+tempPosition[0]
+                tempPositionY = tempPosition[1] - (tupleSquarePos[1]*pixelPerSquare)
         return (tempPositionX,tempPositionY)
-    def AttackColor(self,attack,tuple):
+
+    def attackColor(self,attack,tuple):
+        """colours the attacked case in the lower grid
+        :param attack: x and y coordinates in pixels of the case
+        :param tuple: tuple of coordinates of the case (between 0 and 9)"""
         A_colorx=attack[0]
         A_colory=attack[1]
         if tuple in self.all_position:
@@ -827,84 +838,75 @@ class engineBattleShip(ClientReseau):
             self.drawing_turtle.end_fill()
 
 
-def Main():
+def main():
     parser = argparse.ArgumentParser(prog="BattleShip : The Space Battle")
     parser.add_argument('playername', help='First Player', default="player one")
     parser.add_argument('othername', help='First Player', default=None)
 
     try:
         args = parser.parse_args()
-        game = engineBattleShip(800,800, args.playername, args.othername)
+        game = EngineBattleShip(800,800, args.playername, args.othername)
     except:
-        game = engineBattleShip(800,800)
+        game = EngineBattleShip(800,800)
 
     os.system('cls')
-    #Image de fond
-    game.BgImage("image\\Background.gif")
+
+    game.bgImage("image\\Background.gif")
 
     #Grids
-    game.DrawGrid("Down Grid",10,10,400,200,350,0,0,0,102,102,255) #grille ou on place ses bateaux
-    game.DrawGrid("Up Grid",10,10,250,275,75,0,0,0,102,102,255) #grille ou on attaque l'adversaire
+    game.drawGrid("Down Grid",10,10,400,200,350,0,0,0,102,102,255)
+    game.drawGrid("Up Grid",10,10,250,275,75,0,0,0,102,102,255)
 
-    #Boutons
-    game.Button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
-    game.Button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
-    game.Button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
-
-    #Bateaux
-    game.Button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
-    game.Button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
-    game.Button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
-    game.Button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
-    game.Button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
+    #Buttons
+    game.button('start',"image\\gifButtons\\start.gif",-330,330,150,150)
+    game.button("infos","image\\gifButtons\\Credits.gif",-350,-340,80,80)
+    game.button("exit","image\\gifButtons\\exit.gif",330,340,100,100)
+    game.button("torpilleur","image\\gifButtons\\boat2.gif",-350,50,67,25)
+    game.button("contre-torpilleur","image\\gifButtons\\boat3a.gif",-350,0,99,29)
+    game.button("sous-marin","image\\gifButtons\\boat3b.gif",-350,-50,105,29)
+    game.button("croiseur","image\\gifButtons\\boat4.gif",-325,-100,147,31)
+    game.button("porte-avions","image\\gifButtons\\boat5.gif",-322,-150,177,41)
     
     #Main loops
-    print(game.contre_torpilleur, game.torpilleur, game.croiseur, game.porte_avions, "all position:", game.all_position)
-    startTimeResponse = time.time()
-    while game.GetWhileValue():
+    print(game.contre_torpilleur, game.torpilleur, game.croiseur,
+          game.porte_avions, "all position:", game.all_position)
+    starttimeResponse = time.time()
+    while game.getWhileValue():
         #Initial window title
-        game.WindowTitleNotification(3,"Welcome to BattleShip : The Space Battle","Please place your ships")
-        game.ItemDetector(game.ClicManager())
-        game.display.onkeypress(game.BoatVertical,'Right')
-        game.display.onkeypress(game.BoatHorizontal,'Left')
+        game.windowTitleNotification(3,"Welcome to BattleShip : The Space Battle",
+                                     "Please place your ships")
+        game.itemDetector(game.clicManager())
+        game.display.onkeypress(game.boatVertical,'Right')
+        game.display.onkeypress(game.boatHorizontal,'Left')
         game.display.listen()
     print("You have now started the game")
     print("You are playing against : " + str(game.client.adversaire()))
     while True:
         #Actual gameplay
-        #attaquer is in ItemDetector and the attack is sent when valid case is clicked
         tempClient=None
-        while tempClient == None: #loop pour attendre l'attaque de l'adversaire
-            game.ItemDetector(game.ClicManager(),game.client.attack_sent()) #ici on detecte lattaque du joueur
+        while tempClient == None: #loop waiting for attack results
+            game.itemDetector(game.clicManager(),game.client.attack_sent())
             timeNow3 = time.time()
-            if (timeNow3 - startTimeResponse) >= 0.1:
+            if (timeNow3 - starttimeResponse) >= 0.1:
                 tempClient = game.client.attaquer()
-                startTimeResponse =  time.time()
+                starttimeResponse =  time.time()
                 if tempClient != None:
                     print(tempClient)
                     break
         tempClient2=(tempClient[0],tempClient[1])
-        game.AttackColor(game.SquarePixelPos('Down Grid',tempClient2),tempClient2)
-        game.Damage(tempClient2)
-        # on rapporte notre resultat de l'attaque a l'autre joueur
+        game.attackColor(game.squarePixelPos('Down Grid',
+                                             tempClient2),tempClient2)
+        game.damage(tempClient2)
         rapporter = None
-        while rapporter == None: # boucle qui attend le résultat de l'attaque de l'autre joueur
+        while rapporter == None: # loop waiting for the opponent's response
             timeNow3 = time.time()
-            if (timeNow3-startTimeResponse) >= 0.1:
+            if (timeNow3-starttimeResponse) >= 0.1:
                 rapporter = game.client.rapporter()
-                startTimeResponse = time.time()
+                starttimeResponse = time.time()
                 if rapporter != None:
-                    game.WinAnim(rapporter)
+                    game.winAnim(rapporter)
                     print(rapporter)
                     break
-        
-
-        ##text in window title
-        #if game.client.attack_sent()==False:
-        #    game.WindowTitleNotification(0.5,"-_-It's your turn-_-","_-_IT'S YOUR TURN_-_")
-        #elif game.client.attack_sent()==True or game.client.report_sent()==True :
-        #    game.WindowTitleNotification(1,"Please wait.","Please wait..","Please wait...")
-        #game.ItemDetector(game.ClicManager())
 
 if __name__ == "__main__":
-    Main()
+    main()
