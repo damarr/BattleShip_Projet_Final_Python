@@ -196,9 +196,9 @@ class EngineBattleShip(ClientReseau):
         self.casex = None
         self.casey = None
         self.orientation=True
-        self.drawing_turtle=turtle.Turtle()
-        self.drawing_turtle.fillcolor("gray")
-        self.drawing_turtle.ht()
+        self.drawingturtle=turtle.Turtle()
+        self.drawingturtle.fillcolor("gray")
+        self.drawingturtle.ht()
         self.attackturtle = turtle.Turtle()
         self.attackturtle.hideturtle()
         self.attackturtle.penup()
@@ -440,9 +440,9 @@ class EngineBattleShip(ClientReseau):
                             self.attackturtle.goto(self.attackturtle.pos()[0] - self.squaresizeshot * 2 - correction, self.attackturtle.pos()[1])
                             self.attackturtle.goto(self.attackturtle.pos()[0],self.attackturtle.pos()[1] + self.squaresizeshot * 2 + correction)
                             self.attackturtle.end_fill()
-                            tempPosX = self.attackPos(self.attackturtle.pos())[0] - 1
-                            tempPosY = self.attackPos(self.attackturtle.pos())[1] - 1
-                            self.client.attaquer((tempPosX,tempPosY))
+                            tempposx = self.attackPos(self.attackturtle.pos())[0] - 1
+                            tempposy = self.attackPos(self.attackturtle.pos())[1] - 1
+                            self.client.attaquer((tempposx,tempposy))
 
                         if self.boatclic != (None,None):
                             if key != "Up Grid" and self.getWhileValue() == True: 
@@ -450,11 +450,7 @@ class EngineBattleShip(ClientReseau):
                                 self.boatclic = (None,None)
                     elif (shortcut[1] == (0,0)):
                         if key == "start":
-                            self.startButton() #a supprimer et decommenter le reste du if
-                            #if len(self.all_position)!=17:
-                            #    print('You still have some inactives ships')
-                            #else:
-                            #    self.startButton()
+                            self.startButton() 
                         elif key == "exit":
                             self.exitButton()
                         elif key == "infos":
@@ -483,50 +479,50 @@ class EngineBattleShip(ClientReseau):
     def boatButton(self,position):
         '''Function which allows the click following the click on an 
         icon boat to place the boat in the grid '''
-        squarePosition=self.getClickedSquare()
-        self.isThereABoat(squarePosition)
-        if squarePosition != (None,None):
+        squareposition=self.getClickedSquare()
+        self.isThereABoat(squareposition)
+        if squareposition != (None,None):
             for i in range (self.boatclic[0]):
                 if self.orientation==True:
                     self.square_size = 38
-                    self.drawing_turtle.penup
+                    self.drawingturtle.penup
                     self.color_x=position[0]
                     self.color_y=position[1]-self.square_size*i
                     self.testv=position[1]-self.square_size*(self.boatclic[0]-1)
                     self.testh=position[0]-self.square_size*(self.boatclic[0]-1)
                     if self.testv>=-302 and self.is_a_boat==False:
-                        self.drawing_turtle.penup()
-                        self.drawing_turtle.goto(self.color_x,self.color_y)
-                        self.drawing_turtle.pendown()
-                        self.drawing_turtle.begin_fill()
-                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                        self.drawingturtle.penup()
+                        self.drawingturtle.goto(self.color_x,self.color_y)
+                        self.drawingturtle.pendown()
+                        self.drawingturtle.begin_fill()
+                        self.drawingturtle.goto(self.color_x+self.square_size,
                                                  self.color_y)
-                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                        self.drawingturtle.goto(self.color_x+self.square_size,
                                                  self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,
+                        self.drawingturtle.goto(self.color_x,
                                                  self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,self.color_y)
-                        self.drawing_turtle.end_fill()        
+                        self.drawingturtle.goto(self.color_x,self.color_y)
+                        self.drawingturtle.end_fill()        
                 else:
                     self.square_size = 38
-                    self.drawing_turtle.penup()
+                    self.drawingturtle.penup()
                     self.color_x=position[0]+self.square_size*i
                     self.color_y=position[1]
                     self.testh=position[0]+self.square_size*(self.boatclic[0]-1)
                     if self.testh <= 152 and self.is_a_boat==False:
-                        self.drawing_turtle.penup()
-                        self.drawing_turtle.goto(self.color_x,self.color_y)
-                        self.drawing_turtle.pendown()
-                        self.drawing_turtle.begin_fill()
-                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                        self.drawingturtle.penup()
+                        self.drawingturtle.goto(self.color_x,self.color_y)
+                        self.drawingturtle.pendown()
+                        self.drawingturtle.begin_fill()
+                        self.drawingturtle.goto(self.color_x+self.square_size,
                                                  self.color_y)
-                        self.drawing_turtle.goto(self.color_x+self.square_size,
+                        self.drawingturtle.goto(self.color_x+self.square_size,
                                                  self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,
+                        self.drawingturtle.goto(self.color_x,
                                                  self.color_y-self.square_size)
-                        self.drawing_turtle.goto(self.color_x,self.color_y)
-                        self.drawing_turtle.end_fill()
-            self.BoatDict(squarePosition)
+                        self.drawingturtle.goto(self.color_x,self.color_y)
+                        self.drawingturtle.end_fill()
+            self.BoatDict(squareposition)
 
     def boat(self,key):
         "Allows the program to differentiate which boat is placed on the grid"
@@ -558,8 +554,8 @@ class EngineBattleShip(ClientReseau):
         
     def BoatDict(self, position):
         ''' Add ships position in a liste '''
-        self.squarePosition=position
-        self.isThereABoat(self.squarePosition)
+        self.squareposition=position
+        self.isThereABoat(self.squareposition)
         if self.boatclic==(3,"sous-marin"):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
@@ -759,38 +755,38 @@ class EngineBattleShip(ClientReseau):
     def winAnim(self,report):
         ''' Creates a win animation at the end of the game '''
         if report=='Win':
-            self.Win_turtle=turtle.Turtle()
-            self.Win_turtle.ht()
-            self.Win_turtle.color('red')
-            self.Win_turtle.pensize(400)
-            self.Win_turtle.penup()
-            self.Win_turtle.goto(-200,200)
-            self.Win_turtle.pendown()
-            self.Win_turtle.goto(200,200)
-            self.Win_turtle.goto(200,-200)
-            self.Win_turtle.goto(-200,-200)
-            self.Win_turtle.penup()
-            self.Win_turtle.goto(-400,0)
-            self.Win_turtle.color('white')
-            self.Win_turtle.write('Victory!', move=False, 
+            self.winturtle=turtle.Turtle()
+            self.winturtle.ht()
+            self.winturtle.color('red')
+            self.winturtle.pensize(400)
+            self.winturtle.penup()
+            self.winturtle.goto(-200,200)
+            self.winturtle.pendown()
+            self.winturtle.goto(200,200)
+            self.winturtle.goto(200,-200)
+            self.winturtle.goto(-200,-200)
+            self.winturtle.penup()
+            self.winturtle.goto(-400,0)
+            self.winturtle.color('white')
+            self.winturtle.write('Victory!', move=False, 
                                   align="left", font=("Arial", 180, "normal"))
 
     def loseAnim(self):
         '''Create a lose animation at the end of the game '''
-        self.Win_turtle=turtle.Turtle()
-        self.Win_turtle.ht()
-        self.Win_turtle.color('black')
-        self.Win_turtle.pensize(400)
-        self.Win_turtle.penup()
-        self.Win_turtle.goto(-200,200)
-        self.Win_turtle.pendown()
-        self.Win_turtle.goto(200,200)
-        self.Win_turtle.goto(200,-200)
-        self.Win_turtle.goto(-200,-200)
-        self.Win_turtle.penup()
-        self.Win_turtle.goto(-400,0)
-        self.Win_turtle.color('white')
-        self.Win_turtle.write('Defeat!', move=False, align="left", 
+        self.winturtle=turtle.Turtle()
+        self.winturtle.ht()
+        self.winturtle.color('black')
+        self.winturtle.pensize(400)
+        self.winturtle.penup()
+        self.winturtle.goto(-200,200)
+        self.winturtle.pendown()
+        self.winturtle.goto(200,200)
+        self.winturtle.goto(200,-200)
+        self.winturtle.goto(-200,-200)
+        self.winturtle.penup()
+        self.winturtle.goto(-400,0)
+        self.winturtle.color('white')
+        self.winturtle.write('Defeat!', move=False, align="left", 
                               font=("Arial", 180, "normal"))
     
     def squarePixelPos(self,name,tupleSquarePos): 
@@ -815,27 +811,27 @@ class EngineBattleShip(ClientReseau):
         A_colorx=attack[0]
         A_colory=attack[1]
         if tuple in self.all_position:
-            self.drawing_turtle.fillcolor('red')
-            self.drawing_turtle.penup()
-            self.drawing_turtle.goto(A_colorx,A_colory)
-            self.drawing_turtle.pendown()
-            self.drawing_turtle.begin_fill()
-            self.drawing_turtle.goto(A_colorx+38,A_colory)
-            self.drawing_turtle.goto(A_colorx+38,A_colory-38)
-            self.drawing_turtle.goto(A_colorx,A_colory-38)
-            self.drawing_turtle.goto(A_colorx,A_colory)
-            self.drawing_turtle.end_fill()
+            self.drawingturtle.fillcolor('red')
+            self.drawingturtle.penup()
+            self.drawingturtle.goto(A_colorx,A_colory)
+            self.drawingturtle.pendown()
+            self.drawingturtle.begin_fill()
+            self.drawingturtle.goto(A_colorx+38,A_colory)
+            self.drawingturtle.goto(A_colorx+38,A_colory-38)
+            self.drawingturtle.goto(A_colorx,A_colory-38)
+            self.drawingturtle.goto(A_colorx,A_colory)
+            self.drawingturtle.end_fill()
         else:
-            self.drawing_turtle.fillcolor('white')
-            self.drawing_turtle.penup()
-            self.drawing_turtle.goto(A_colorx,A_colory)
-            self.drawing_turtle.pendown()
-            self.drawing_turtle.begin_fill()
-            self.drawing_turtle.goto(A_colorx+38,A_colory)
-            self.drawing_turtle.goto(A_colorx+38,A_colory-38)
-            self.drawing_turtle.goto(A_colorx,A_colory-38)
-            self.drawing_turtle.goto(A_colorx,A_colory)
-            self.drawing_turtle.end_fill()
+            self.drawingturtle.fillcolor('white')
+            self.drawingturtle.penup()
+            self.drawingturtle.goto(A_colorx,A_colory)
+            self.drawingturtle.pendown()
+            self.drawingturtle.begin_fill()
+            self.drawingturtle.goto(A_colorx+38,A_colory)
+            self.drawingturtle.goto(A_colorx+38,A_colory-38)
+            self.drawingturtle.goto(A_colorx,A_colory-38)
+            self.drawingturtle.goto(A_colorx,A_colory)
+            self.drawingturtle.end_fill()
 
 
 def main():
