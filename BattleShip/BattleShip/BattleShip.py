@@ -1,22 +1,28 @@
-﻿# Welcome and have fun programming!
-# Project by Damien Arroyo, William and Nadia.
-# AWESOME !
-
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+""" Description du module
+"""
+__auteur__ = "NACHI16"
+__date__ = "2015-12-11"
+__coequipiers__ = "IDUL", "IDUL"
+
+#import standard modules
 import json, socket, time, turtle, os, webbrowser, argparse, sys
 
 class Protestation(Exception):
     pass
 
-class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='python.gel.ulaval.ca', port=31415)
+class ClientReseau(object):
     """Client réseau pour jeu en-ligne.
     :param pseudo: votre pseudonyme.
-    :param adversaire: le pseudonyme de l'adversaire que vous désirez affronter, None fera un pairage aléatoire.
+    :param adversaire: le pseudonyme de l'adversaire que vous désirez affronter,
+    None fera un pairage aléatoire.
     :param serveur: l'adresse ou le nom de l'hôte du serveur de jeu.
     :param port: le port du serveur de jeu."""
 
-    def __init__(self, pseudo, adversaire, serveur='python.gel.ulaval.ca', port=31415):
+    def __init__(self, pseudo, adversaire, serveur='python.gel.ulaval.ca',
+                port=31415):
         ''' Initialisation du jeu '''
         self.pseudo = pseudo
         self.adv = adversaire
@@ -41,7 +47,8 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         """ Communique avec le serveur de jeu pour créer une partie.
         :returns: un dictionnaire contenant une clé 'joueurs' à laquelle
         est associée un tuple de pseudonymes de joueurs. """
-        requete = {"requête": "créer", "pseudo": self.pseudo, "adversaire": self.adv}
+        requete = {"requête": "créer", "pseudo": self.pseudo, "adversaire":
+                   self.adv}
         self.__envoyer(requete)
         return self.__recevoir_sync()
 
@@ -49,7 +56,8 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         """Envoie une requête au serveur de jeu sous la forme d'une chaîne
         de caractères JSON.
         """
-        self.socket.sendall(bytes("\x02" + json.dumps(requete) + "\x03", "utf-8"))
+        self.socket.sendall(bytes("\x02" + json.dumps(requete) + "\x03",
+                                 "utf-8"))
 
     def __recevoir(self):
         """Reçoit du serveur de jeu une chaîne de caractères et retourne
@@ -77,19 +85,21 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         return reponse
 
     def attaquer(self, cellule=None):
-        """Transmet au serveur la cellule de votre attaque. Cette cellule est constituée d'un
-        tuple de deux indices compris entre 0 et 9.
+        """Transmet au serveur la cellule de votre attaque. Cette cellule est 
+        constituée d'un tuple de deux indices compris entre 0 et 9.
         
-        :param cellule: La cellule à attaquer sous la forme d'un tuple de deux indices compris
-        entre 0 et 9. Pour vérifier si la réponse de l'adversaire est arriver, il faut mettre l'argument à None.
-        :return: La cellule attaquée par votre adversaire si celle-ci est disponible; None autrement.
+        :param cellule: La cellule à attaquer sous la forme d'un tuple de deux
+        indices compris entre 0 et 9. Pour vérifier si la réponse de 
+        l'adversaire est arrivée, il faut mettre l'argument à None.
+        :return: La cellule attaquée par votre adversaire si celle-ci est
+        disponible; None autrement.
 
-        Cette fonction retourne None si aucune réponse de votre adversaire n'a été obtenue
-        à temps par le serveur de jeu. Dans ce cas, vous devez rappeler la fonction sans argument
-        jusqu'à ce vous obteniez une réponse (de préférence, introduire un délai entre les appels)."""
-        assert cellule is None or self.attaque_envoyee == False, ("Vous devez attendre la réponse"
-                                                                  "avant d'envoyer une nouvelle"
-                                                                  "attaque")
+        Cette fonction retourne None si aucune réponse de votre adversaire 
+        n'a été obtenue à temps par le serveur de jeu. Dans ce cas, vous 
+        devez rappeler la fonction sans argument jusqu'à ce vous obteniez une
+        réponse (de préférence, introduire un délai entre les appels)."""
+        assert cellule is None or self.attaque_envoyee == False, ("Vous devez" 
+                    " attendre la réponse avant d'envoyer une nouvelle attaque")
         if cellule is not None:
             requete = {'requête': 'attaquer', 'cellule': cellule}
             self.__envoyer(requete)
@@ -103,18 +113,21 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
             return None
 
     def rapporter(self, message=None):
-        """Rapporte au serveur le message du résultat de la dernière attaque de votre adversaire.
+        """Rapporte au serveur le message du résultat de la dernière 
+        attaque de votre adversaire.
 
         :param message: la chaîne de caractères de votre rapport.
-        :returns: Le rapport de votre adversaire s'il est disponible; None autrement.
+        :returns: Le rapport de votre adversaire s'il est disponible; 
+        None autrement.
 
-        Cette fonction retourne None si aucune réponse de votre adversaire n'a été obtenue
-        à temps par le serveur de jeu. Dans ce cas, vous devez rappeler la fonction sans argument
-        jusqu'à ce vous obteniez une réponse (de préférence, introduire un délai entre les appels).
-        """
-        assert message is None or not self.attaque_envoyee, ("Vous devez attendre la réponse"
-                                                             " avant d'envoyer un nouveau"
-                                                             " rapport")
+        Cette fonction retourne None si aucune réponse de votre adversaire 
+        n'a été obtenue à temps par le serveur de jeu. 
+        Dans ce cas, vous devez rappeler la fonction sans argument jusqu'à 
+        ce vous obteniez une réponse (de préférence, introduire un 
+        délai entre les appels)."""
+
+        assert message is None or not self.attaque_envoyee, ("Vous devez" 
+                    " attendre la réponse avant d'envoyer un nouveau rapport")
         if message is not None:
             requete = {"requête": "rapporter", "message": message}
             self.__envoyer(requete)
@@ -165,7 +178,10 @@ class ClientReseau(object): #ClientReseau(pseudo, adversaire=None, serveur='pyth
         return self.rapport_envoyee
 
 class engineBattleShip(ClientReseau):
-    "Class that contains the whole engine of the game"
+    """Class that contains the whole engine of the game
+    :param sizeWidth: determines the width of the game's window
+    :param sizeHeight: determines the height of the game's window"""
+
     def __init__(self,sizeWidth,sizeHeight):
         self.display = turtle.Screen()
         self.display.setup(sizeWidth,sizeHeight)
@@ -202,7 +218,7 @@ class engineBattleShip(ClientReseau):
         self.secondTime = 0
 
     def GetUserName(self): 
-        "Function asking your username and send it to the BattleShip init"
+        "Function asking your username and sends it to the BattleShip init"
         return self.display.textinput("Your username", "Enter your username : ")
     
     def GetOtherName(self): #a ameliorer un peu
