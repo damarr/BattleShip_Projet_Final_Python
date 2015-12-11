@@ -236,7 +236,10 @@ class engineBattleShip(ClientReseau):
 
     def StartButton(self):
         "Changes the part of the game the player is in"
-        self.whileValue = False
+        if len(self.all_position)==17:
+            self.whileValue = False
+        else:
+            print('You are not ready to start yet')
 
     def ExitButton(self):
         "Quits the program"
@@ -370,7 +373,7 @@ class engineBattleShip(ClientReseau):
                     return((key,(posX,posY)))
         self.turtlekiller.clear()
 
-    def GridDecomposer(self,name,clicPosition): #c'est quoi le parametre name??
+    def GridDecomposer(self,name,clicPosition): 
         """Returns the raw X and Y position of the top left square corner clicked by the user
         :param: name is the name of the grid
         :param: clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
@@ -405,7 +408,7 @@ class engineBattleShip(ClientReseau):
             self.caseY = None
             return ((transitionX-1,transitionY-1))
     
-    def ItemDetector(self,clicPosition,attaqueEnvoyee=None): #attaqueEnvoyee prend attaque_envoyee de ClientReseau
+    def ItemDetector(self,clicPosition,attaqueEnvoyee=None):
         '''Treats items which are in itemdictionnary
         :param clicPosition is (key,(posX,posY)) where key is the item name and posX and posY are raw coordinates
         :returns: nothing'''
@@ -414,12 +417,13 @@ class engineBattleShip(ClientReseau):
                 if (key == clicPosition[0]):
                     shortcut = self.itemdictionary.get(key)
                     if (shortcut[1] != (0,0)):
-                        self.GridDecomposer(key,clicPosition) # Si c'est une grid execute le programme qui renvoit la coordonée de la case
+                        self.GridDecomposer(key,clicPosition) 
                         self.squareSizeAtt = self.GetGridSquareSize("Down Grid")
                         self.squareSizeShot = self.GetGridSquareSize("Up Grid")
-                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueEnvoyee != True: #coloriage de la case attaquée sur la grille d'en haut
+                        if key == "Up Grid" and self.GetWhileValue() != True and attaqueEnvoyee != True: 
                             self.attackTurtle.goto(self.GridDecomposer("Up Grid",clicPosition))
                             self.attackedSquare = self.GetClickedSquare()
+                            self.attackTurtle.pencolor('white')
                             self.attackTurtle.begin_fill()
                             correction = 4
                             self.attackTurtle.goto(self.attackTurtle.pos()[0] + self.squareSizeShot * 2 + correction,self.attackTurtle.pos()[1])
@@ -431,8 +435,8 @@ class engineBattleShip(ClientReseau):
                             tempPosY = self.AttackPos(self.attackTurtle.pos())[1] - 1
                             self.client.attaquer((tempPosX,tempPosY))
 
-                        if self.boatClic != (None,None): #si on a selectionne un bateau alors on peut le placer dans la grille du bas
-                            if key != "Up Grid" and self.GetWhileValue() == True: #si on est pas sur la grille du haut et on est dans la loop avant Start
+                        if self.boatClic != (None,None):
+                            if key != "Up Grid" and self.GetWhileValue() == True: 
                                 self.BoatButton(self.GridDecomposer(key,clicPosition))
                                 self.boatClic = (None,None)
                     elif (shortcut[1] == (0,0)):
@@ -451,7 +455,7 @@ class engineBattleShip(ClientReseau):
                             self.orientation=True
 
     def BoatVertical(self):
-        ''' Permet de placer les bateaux à la verticale avec la flèche de droite '''
+        ''' Allows to place vertical boats using right arrow '''
         if self.GetWhileValue()==True:
             self.display.onkeypress(None,'Right')
             self.orientation=True
@@ -459,7 +463,7 @@ class engineBattleShip(ClientReseau):
             print("The boat is vertical")
 
     def BoatHorizontal(self):
-        ''' Permet de placer les bateaux à l'horizontale avec la flèche de gauche '''
+        ''' Allows to place horizontal boats using left arrow'''
         if self.GetWhileValue()==True:
             self.display.onkeypress(None,'Left')
             self.orientation=False
@@ -468,7 +472,7 @@ class engineBattleShip(ClientReseau):
 
 
     def BoatButton(self,position):
-        ''' Fonction qui permet au click suivant le click sur une icone bateau de placer le bateau dans la grille '''
+        '''Function which allows the click following the click on an icon boat to place the boat in the grid '''
         squarePosition=self.GetClickedSquare()
         self.IsThereABoat(squarePosition)
         if squarePosition != (None,None):
@@ -509,7 +513,7 @@ class engineBattleShip(ClientReseau):
             self.BoatDict(squarePosition)
 
     def Boat(self,key):
-        ''' Permet au programme de différencier quel bateau est placé sur la grille suite au clique '''
+        ''' Allows the program to differentiate which boat is placed on the grid '''
         if key == "sous-marin":
             if self.sous_marin==[]:
                 self.boatClic = (3,"sous-marin")
@@ -537,7 +541,7 @@ class engineBattleShip(ClientReseau):
                 print("This ship is already on the map")
         
     def BoatDict(self, position):
-        ''' Insère les positions des navires en mémoire '''
+        ''' Add ships position in a liste '''
         self.squarePosition=position
         self.IsThereABoat(self.squarePosition)
         if self.boatClic==(3,"sous-marin"):
@@ -595,19 +599,17 @@ class engineBattleShip(ClientReseau):
             if self.orientation==True:
                 if self.testv>=-302 and self.is_a_boat==False:
                     for i in range (self.boatClic[0]):
-                        self.croiseur.append((position[0]--2,position[1]-2+i))
-                        self.all_position.append((position[0]-2,position[1]-2+i))
+                        self.croiseur.append((position[0],position[1]+i))
+                        self.all_position.append((position[0],position[1]+i))
             else:
                 if self.testh<=152 and self.is_a_boat==False:    
                     for i in range (self.boatClic[0]):
-                        self.croiseur.append((position[0]-2+i,position[1]-2))
-                        self.all_position.append((position[0]-2+i,position[1]-2)) 
+                        self.croiseur.append((position[0]+i,position[1]))
+                        self.all_position.append((position[0]+i,position[1])) 
 
 
     def IsThereABoat(self, position):
-        ''' Permet de vérifier si un navire est présent pour éviter que ceux-ci soit l'un par dessus l'autre. 
-        Si un bateau se trouve sur l'une des cases prises par le navire que l'on cherche à placer, 
-        la fonction retournera True, ce qui empêchera de placer le navire. '''
+        ''' Function that check if the position where the player want to place his ship is already used by another ship. It prevent boat stacking '''
         if self.boatClic==(3,"sous-marin") or self.boatClic==(3,"contre-torpilleur"):
             if self.orientation==True:
                 if (position[0],position[1]) in self.all_position or (position[0],position[1]+1) in self.all_position or (position[0],position[1]+2) in self.all_position:
@@ -686,74 +688,127 @@ class engineBattleShip(ClientReseau):
             self.torpilleur.remove(attack)
             self.all_position.remove(attack)
             if self.torpilleur == [] and self.all_position!=[]:
-                self.client.rapporter('coulé')
+                self.client.rapporter('Hit and Sank')
             elif self.torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.ILost()
+                self.LoseAnim()
             else:
-                self.client.rapporter('touché')
-        elif attack in self.contre_torpilleur: #-------contre torpilleur
+                self.client.rapporter('Hit')
+        elif attack in self.contre_torpilleur:
             self.contre_torpilleur.remove(attack)
             self.all_position.remove(attack)
             if self.contre_torpilleur == [] and self.all_position!=[]:
-                self.client.rapporter('coulé')
+                self.client.rapporter('Ht and sank')
             elif self.contre_torpilleur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.ILost()
+                self.LoseAnim()
             else:
-                self.client.rapporter('touché')
-        elif attack in self.croiseur: #-------croiseur
+                self.client.rapporter('Hit')
+        elif attack in self.croiseur:
             self.croiseur.remove(attack)
             self.all_position.remove(attack)
             if self.croiseur == [] and self.all_position!=[]:
-                self.client.rapporter('coulé')
+                self.client.rapporter('Hit and Sank')
             elif self.croiseur ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.ILost()
+                self.LoseAnim()
             else:
-                self.client.rapporter('touché')
-        elif attack in self.porte_avions: #-------porte avions
+                self.client.rapporter('Hit and sank')
+        elif attack in self.porte_avions:
             self.porte_avions.remove(attack)
             self.all_position.remove(attack)
             if self.porte_avions == [] and self.all_position!=[]:
-                self.client.rapporter('coulé')
+                self.client.rapporter('Hit and Sank')
             elif self.porte_avions ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.ILost()
+                self.LoseAnim()
             else:
-                self.client.rapporter('touché')
-        elif attack in self.sous_marin: #-------sous marin
+                self.client.rapporter('Hit')
+        elif attack in self.sous_marin:
             self.sous_marin.remove(attack)
             self.all_position.remove(attack)
             if self.sous_marin == [] and self.all_position!=[]:
-                self.client.rapporter('coulé')
+                self.client.rapporter('Hit and sank')
             elif self.sous_marin ==[] and self.all_position==[]:
                 self.client.rapporter('Win')
-                self.ILost()
+                self.LoseAnim()
             else:
-                self.client.rapporter('touché')
+                self.client.rapporter('Hit')
         else:
-            self.client.rapporter("A l'eau")
-        print("self.sous_marin",self.sous_marin,"    self.porte_avions",self.porte_avions,"     self.croiseur", self.croiseur,"      self.contre_torpilleur", self.contre_torpilleur,"      self.torpilleur", self.torpilleur)
-        print("self.all_position", self.all_position)
+            self.client.rapporter("Miss")
+        print(self.all_position)
 
-    def IWon(self):
-        timee, delayy = time.time(), time.time()
-        print("YOU WON THE GAME")
-        while True:
-            if (timee-delayy) > 5:
-                self.display.bye()
-            else:
-                delayy=time.time()
+    def WinAnim(self,report):
+        ''' Create a win animation at the end of the game '''
+        if report=='Win':
+            self.Win_turtle=turtle.Turtle()
+            self.Win_turtle.ht()
+            self.Win_turtle.color('red')
+            self.Win_turtle.pensize(400)
+            self.Win_turtle.penup()
+            self.Win_turtle.goto(-200,200)
+            self.Win_turtle.pendown()
+            self.Win_turtle.goto(200,200)
+            self.Win_turtle.goto(200,-200)
+            self.Win_turtle.goto(-200,-200)
+            self.Win_turtle.penup()
+            self.Win_turtle.goto(-400,0)
+            self.Win_turtle.color('white')
+            self.Win_turtle.write('Victory!', move=False, align="left", font=("Arial", 180, "normal"))
 
-    def ILost(self):
-        timee, delayy = time.time(), time.time()
-        print("YOU LOST THE GAME")
-        while True:
-            if (timee-delayy) > 5:
-                self.display.bye()
-            else:
-                delayy=time.time()
+    def LoseAnim(self):
+        '''Create a lose animation at the end of the game '''
+        self.Win_turtle=turtle.Turtle()
+        self.Win_turtle.ht()
+        self.Win_turtle.color('black')
+        self.Win_turtle.pensize(400)
+        self.Win_turtle.penup()
+        self.Win_turtle.goto(-200,200)
+        self.Win_turtle.pendown()
+        self.Win_turtle.goto(200,200)
+        self.Win_turtle.goto(200,-200)
+        self.Win_turtle.goto(-200,-200)
+        self.Win_turtle.penup()
+        self.Win_turtle.goto(-400,0)
+        self.Win_turtle.color('white')
+        self.Win_turtle.write('Defeat!', move=False, align="left", font=("Arial", 180, "normal"))
+    
+    def SquarePixelPos(self,name,tupleSquarePos): 
+        ''' Returns the position in pixels of a selected square in a grid. Returns a tuple. Needs the name of the grid and the position inside that grid of the square wanted'''
+        for key in self.itemdictionary:
+            if key == name:
+                temp = self.itemdictionary.get(key)[0]
+                temp2 = self.itemdictionary.get(key)[1]
+                tempPosition = self.itemdictionary.get(key)[3]
+                pixelPerSquare = temp[0]/temp2[0]
+                tempPositionX = tupleSquarePos[0] * pixelPerSquare + tempPosition[0]
+                tempPositionY = tempPosition[1] - (tupleSquarePos[1] * pixelPerSquare)
+        return (tempPositionX,tempPositionY)
+    def AttackColor(self,attack,tuple):
+        A_colorx=attack[0]
+        A_colory=attack[1]
+        if tuple in self.all_position:
+            self.drawing_turtle.fillcolor('red')
+            self.drawing_turtle.penup()
+            self.drawing_turtle.goto(A_colorx,A_colory)
+            self.drawing_turtle.pendown()
+            self.drawing_turtle.begin_fill()
+            self.drawing_turtle.goto(A_colorx+38,A_colory)
+            self.drawing_turtle.goto(A_colorx+38,A_colory-38)
+            self.drawing_turtle.goto(A_colorx,A_colory-38)
+            self.drawing_turtle.goto(A_colorx,A_colory)
+            self.drawing_turtle.end_fill()
+        else:
+            self.drawing_turtle.fillcolor('white')
+            self.drawing_turtle.penup()
+            self.drawing_turtle.goto(A_colorx,A_colory)
+            self.drawing_turtle.pendown()
+            self.drawing_turtle.begin_fill()
+            self.drawing_turtle.goto(A_colorx+38,A_colory)
+            self.drawing_turtle.goto(A_colorx+38,A_colory-38)
+            self.drawing_turtle.goto(A_colorx,A_colory-38)
+            self.drawing_turtle.goto(A_colorx,A_colory)
+            self.drawing_turtle.end_fill()
 
 
 def Main():
@@ -767,6 +822,7 @@ def Main():
     except:
         game = engineBattleShip(800,800)
 
+    os.system('cls')
     #Image de fond
     game.BgImage("image\\Background.gif")
 
@@ -812,7 +868,9 @@ def Main():
                     print(tempClient)
                     break
         tempClient2=(tempClient[0],tempClient[1])
-        game.Damage(tempClient2) # on rapporte notre resultat de l'attaque a l'autre joueur
+        game.AttackColor(game.SquarePixelPos('Down Grid',tempClient2),tempClient2)
+        game.Damage(tempClient2)
+        # on rapporte notre resultat de l'attaque a l'autre joueur
         rapporter = None
         while rapporter == None: # boucle qui attend le résultat de l'attaque de l'autre joueur
             timeNow3 = time.time()
@@ -820,9 +878,8 @@ def Main():
                 rapporter = game.client.rapporter()
                 startTimeResponse = time.time()
                 if rapporter != None:
+                    game.WinAnim(rapporter)
                     print(rapporter)
-                    if rapporter == "Win":
-                        game.IWon()
                     break
         
 
